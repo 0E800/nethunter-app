@@ -8,6 +8,10 @@ buildscript {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2' //version required
+}
+
 apply plugin: 'com.android.application'
 
 def getDate() {
@@ -31,7 +35,6 @@ dependencies {
 }
 
 android {
-
     compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
