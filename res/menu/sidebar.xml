@@ -78,4 +78,11 @@
             android:title="@string/drawertitlegps" />
      </group>
 
- </menu>
+    <group android:id="@+id/settingsGroup">
+    <item
+        android:id="@+id/settings_item"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/settings" />
+    </group>
+
+</menu>

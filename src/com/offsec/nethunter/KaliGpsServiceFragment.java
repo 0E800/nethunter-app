@@ -109,7 +109,9 @@ public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.R
     }
 
     private void startKismet() {
-            try {
+//        boolean useJuiceSSH = getActivity().getSharedPreferences()
+
+        try {
                 Intent intent =
                         new Intent("com.offsec.nhterm.RUN_SCRIPT_NH");
                 intent.addCategory(Intent.CATEGORY_DEFAULT);

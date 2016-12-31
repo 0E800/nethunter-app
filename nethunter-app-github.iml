@@ -93,6 +93,8 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/design/25.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/preference-v14/25.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/preference-v7/25.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/25.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-compat/25.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.1.0/jars" />
@@ -106,6 +108,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/10.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/10.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/10.0.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.sonelli/juicessh-pluginlibrary/1.0.13/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/org.thoughtcrime.ssl.pinning/AndroidPinning/1.0.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-classes" />
@@ -131,6 +134,8 @@
     <orderEntry type="library" exported="" name="support-annotations-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="design-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="guava-19.0-rc2" level="project" />
+    <orderEntry type="library" exported="" name="preference-v7-25.1.0" level="project" />
+    <orderEntry type="library" exported="" name="juicessh-pluginlibrary-1.0.13" level="project" />
     <orderEntry type="library" exported="" name="play-services-tasks-10.0.1" level="project" />
     <orderEntry type="library" exported="" name="transition-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-10.0.1" level="project" />
@@ -139,6 +144,7 @@
     <orderEntry type="library" exported="" name="animated-vector-drawable-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-10.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-25.1.0" level="project" />
+    <orderEntry type="library" exported="" name="preference-v14-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="joda-time-2.9.7" level="project" />
     <orderEntry type="library" exported="" name="support-core-ui-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-media-compat-25.1.0" level="project" />

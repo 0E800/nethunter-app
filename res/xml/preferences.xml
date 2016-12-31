@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="External SSH client">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:title="Use JuiceSSH"
+            android:key="prefkey_use_juice"
+            android:id="@+id/pref_use_juice"
+            />
+
+        <ListPreference
+            android:title="JuiceSSH Profile"
+            android:entries="@array/pref_ssh_list"
+            android:entryValues="@array/pref_ssh_list"
+            android:key="prefkey_juice_profile"
+            android:dialogTitle="JuiceSSH Profile"
+            android:dialogMessage="Select the JuiceSSH connection to use"
+            android:dependency="prefkey_use_juice" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -32,14 +32,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.Stack;
-
 import com.offsec.nethunter.GPS.KaliGPSUpdates;
 import com.offsec.nethunter.GPS.LocationUpdateService;
 import com.offsec.nethunter.utils.CheckForRoot;
 import com.winsontan520.wversionmanager.library.WVersionManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Stack;
 
 public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpdates.Provider {
 
@@ -91,6 +91,8 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout navigationHeadView = (LinearLayout) inflater.inflate(R.layout.sidenav_header, null);
         navigationView.addHeaderView(navigationHeadView);
@@ -371,6 +373,13 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
                                         .commit();
                                 break;
 
+                            case R.id.settings_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, KaliPreferenceFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+
                             case R.id.checkforupdate_item:
                                 checkUpdate();
                                 break;
@@ -509,6 +518,17 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
             // display conflicting with permission requests
             CheckForRoot();
         }
+
+        if (permnum == 9) {
+            Log.d("HOLA", "CODE0: " + permnum);
+            if (ContextCompat.checkSelfPermission(this,
+                    "com.sonelli.juicessh.api.v1.permission.JUICESSH_ONLY")
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{"com.sonelli.juicessh.api.v1.permission.JUICESSH_ONLY"},
+                        9);
+            }
+        }
     }
 
     @Override
@@ -517,7 +537,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
             Integer permsNum = 8;
             if (permsCurrent < permsNum) {
                 Log.d("AppNav", "Ask permission");
-                permsCurrent = permsCurrent + 1;
+                permsCurrent++;
                 askMarshmallowPerms(permsCurrent);
             } else {
                 Log.d("AppNav", "Permissions granted");

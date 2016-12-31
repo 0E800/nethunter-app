@@ -238,6 +238,7 @@
     <string name="rootdialogtitle">Missing root/busybox</string>
     <string name="rootdialogposbutton">Try again</string>
     <string name="rootdialognegbutton">Quit</string>
+    <string name="settings">Settings</string>
 
     <string name="legacychroottitle">Legacy chroot found!</string>
     <string name="legacychrootmessage">You appear to already have an existing Kali chroot from an older version of Nethunter.\n\nMigrating it to its new location requires a reboot.\n\n Or, you can leave the old chroot alone and install a new chroot.  If you choose this option, make sure you have enough storage for both.</string>
@@ -363,8 +364,10 @@
     <!-- Start GPSFragment -->
     <string name="gps_description">Converts your GPS to nmea then provides to Kali chroot.  Perfect for wardriving with Kismet or just a generic GPS server for Kali.  Requires OTG and external wireless.</string>
     <string name="gps_help">You may need to give Nethunter permissions to GPS. Go to Settings > Apps > Nethunter > Permissions.  When it starts press: "return" three times, Vol+up and "t", "return.</string>
-    <!-- End GPSFragment -->
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- End GPSFragment -->
 
 
     <!-- TODO: Remove or change this placeholder text -->
