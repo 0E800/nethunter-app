@@ -3,13 +3,16 @@ package com.offsec.nethunter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +20,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,11 +29,14 @@ import android.widget.Toast;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import com.offsec.nethunter.utils.AutoSuggestWrapper;
 import com.offsec.nethunter.utils.NhPaths;
 import com.offsec.nethunter.utils.ShellExecuter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -275,7 +283,9 @@ public class ManaFragment extends Fragment{
 
     public static class HostapdFragment extends Fragment {
 
+        private static final String KEY_SSID_SUGGEST = "KEY_SSID_SUGGEST";
         private final String configFilePath = nh.APP_SD_FILES_PATH + "/configs/hostapd-karma.conf";
+        private static final String KEY_IFC_SUGGEST = "KEY_IFC_SUGGEST";
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -283,6 +293,23 @@ public class ManaFragment extends Fragment{
             View rootView = inflater.inflate(R.layout.mana_hostapd, container, false);
             Button button = (Button) rootView.findViewById(R.id.updateButton);
             loadOptions(rootView);
+
+
+//            AutocompleteTextView for Interface Suggestions
+            final AutoSuggestWrapper ifcSuggest =
+                    new AutoSuggestWrapper(getActivity(), KEY_IFC_SUGGEST,
+                            (AppCompatAutoCompleteTextView) rootView.findViewById(R.id.autocomplete_interface),
+                            android.R.layout.simple_list_item_1,
+                            new String[]{"wlan0","wlan1"});
+
+            //            AutocompleteTextView for SSID
+
+            final AutoSuggestWrapper ssidSuggest =
+                    new AutoSuggestWrapper(getActivity(), KEY_SSID_SUGGEST,
+                            (AppCompatAutoCompleteTextView) rootView.findViewById(R.id.ssid),
+                            android.R.layout.simple_list_item_1,  null);
+
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -297,17 +324,19 @@ public class ManaFragment extends Fragment{
                     if(getView() == null){
                         return;
                     }
-                    EditText ifc = (EditText) getView().findViewById(R.id.ifc);
                     EditText bssid = (EditText) getView().findViewById(R.id.bssid);
-                    EditText ssid = (EditText) getView().findViewById(R.id.ssid);
                     EditText channel = (EditText) getView().findViewById(R.id.channel);
                     EditText enableKarma = (EditText) getView().findViewById(R.id.enable_karma);
                     EditText karmaLoud = (EditText) getView().findViewById(R.id.karma_loud);
+
+                    ifcSuggest.onInputComplete();
+                    ssidSuggest.onInputComplete();
+
                     // FIXED BY BINKYBEAR <3
                     if(source != null){
-                        source = source.replaceAll("(?m)^interface=(.*)$", "interface=" + ifc.getText().toString());
+                        source = source.replaceAll("(?m)^interface=(.*)$", "interface=" + ifcSuggest.getText());
                         source = source.replaceAll("(?m)^bssid=(.*)$", "bssid=" + bssid.getText().toString());
-                        source = source.replaceAll("(?m)^ssid=(.*)$", "ssid=" + ssid.getText().toString());
+                        source = source.replaceAll("(?m)^ssid=(.*)$", "ssid=" + ssidSuggest.getText());
                         source = source.replaceAll("(?m)^channel=(.*)$", "channel=" + channel.getText().toString());
                         source = source.replaceAll("(?m)^enable_mana=(.*)$", "enable_mana=" + enableKarma.getText().toString());
                         source = source.replaceAll("(?m)^mana_loud=(.*)$", "mana_loud=" + karmaLoud.getText().toString());
@@ -318,6 +347,7 @@ public class ManaFragment extends Fragment{
 
                 }
             });
+
             return rootView;
         }
 
@@ -326,7 +356,8 @@ public class ManaFragment extends Fragment{
 
 
 
-            final EditText ifc = (EditText) rootView.findViewById(R.id.ifc);
+            final AppCompatAutoCompleteTextView ifc = (AppCompatAutoCompleteTextView)
+                    rootView.findViewById(R.id.autocomplete_interface);
             final EditText bssid = (EditText) rootView.findViewById(R.id.bssid);
             final EditText ssid = (EditText) rootView.findViewById(R.id.ssid);
             final EditText channel = (EditText) rootView.findViewById(R.id.channel);

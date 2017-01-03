@@ -367,6 +367,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="upstream">Upstream</string>
+    <string name="ap_iface">AP Interface</string>
     <!-- End GPSFragment -->
 
 
