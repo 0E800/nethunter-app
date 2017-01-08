@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="External SSH client">
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:title="Use JuiceSSH"
-            android:key="prefkey_use_juice"
-            android:id="@+id/pref_use_juice"
-            />
+            android:title="Use External SSH"
+            android:key="prefkey_use_ssh"
+            android:id="@+id/pref_use_ssh"
+/>
+    <PreferenceCategory android:title="Preference category"
+        app:title="Add/Remove Autocomplete Entries">
 
     </PreferenceCategory>
+    <Preference
+        android:key="@string/prefkey_mana_ap_ifc"
+        app:title="Hostapd AP interface" />
+    <Preference
+        android:key="@string/prefkey_mana_ssid"
+        app:title="Mana AP SSID" />
+
 </PreferenceScreen>

@@ -34,7 +34,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:10.0.1'
     compile 'joda-time:joda-time:2.9.7'
     compile 'com.sonelli:juicessh-pluginlibrary:1.0.+@aar'
-    compile 'com.android.support:preference-v7:25.1.0'
     compile 'com.android.support:preference-v14:25.1.0'
 }
 
@@ -52,6 +51,7 @@ android {
         targetSdkVersion 25
         versionCode 20
         versionName "3.15.3"
+        vectorDrawables.useSupportLibrary=true
     }
 
     sourceSets {

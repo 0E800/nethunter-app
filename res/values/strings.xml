@@ -366,9 +366,11 @@
     <string name="gps_help">You may need to give Nethunter permissions to GPS. Go to Settings > Apps > Nethunter > Permissions.  When it starts press: "return" three times, Vol+up and "t", "return.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="upstream">Upstream</string>
     <string name="ap_iface">AP Interface</string>
+    <string name="prefkey_mana_ap_ifc">keyManaApIfc</string>
+    <string name="prefkey_mana_ssid">keyManaSSID</string>
+    <string name="add">Add</string>
     <!-- End GPSFragment -->
 
 

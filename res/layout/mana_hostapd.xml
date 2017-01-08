@@ -97,7 +97,7 @@
                 android:layout_height="match_parent"
                 android:ems="10"
                 android:hint="@string/enable_karma"
-                style="@style/DesignTextInput"/>
+                style="@style/Nethunter.DesignTextInput"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -111,7 +111,7 @@
                 android:layout_height="match_parent"
                 android:ems="10"
                 android:hint="@string/karma_loud"
-                style="@style/DesignTextInput"/>
+                style="@style/Nethunter.DesignTextInput"/>
         </android.support.design.widget.TextInputLayout>
 
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,15 +19,16 @@
             android:layout_gravity="center_horizontal|center"
             android:gravity="center"
             android:text="@string/hometitle"
-            android:textSize="22sp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nethunter_current_interfaces"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <ListView
             android:layout_width="match_parent"
@@ -48,8 +50,7 @@
             android:layout_height="wrap_content"
             android:text="@string/nethunter_hid_detect"
             android:layout_marginTop="15dp"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <ListView
             android:layout_width="match_parent"
@@ -72,8 +73,15 @@
             android:layout_height="wrap_content"
             android:text="@string/nethunter_busybox_detect"
             android:layout_marginTop="15dp"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/nethunter_hid_detect"
+            android:layout_marginTop="15dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:id="@+id/textView" />
 
         <ListView
             android:layout_width="match_parent"
@@ -96,8 +104,7 @@
             android:layout_height="wrap_content"
             android:text="@string/nethunter_kernelver_detect"
             android:layout_marginTop="15dp"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <ListView
             android:layout_width="match_parent"
