@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -35,11 +36,13 @@ import android.widget.TextView;
 import com.offsec.nethunter.GPS.KaliGPSUpdates;
 import com.offsec.nethunter.GPS.LocationUpdateService;
 import com.offsec.nethunter.utils.CheckForRoot;
+import com.sonelli.juicessh.pluginlibrary.PluginContract;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.UUID;
 
 public class AppNavHomeActivity extends AppCompatActivity implements
         KaliGPSUpdates.Provider, FragmentSwitcher {
@@ -63,6 +66,8 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     private Integer permsCurrent = 1;
     private boolean locationUpdatesRequested = false;
     private KaliGPSUpdates.Receiver locationUpdateReceiver;
+    private SSHManager sshManager = null;
+    private UUID connectionId;
 
     public static Context getAppContext() {
         return c;
@@ -80,6 +85,19 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         } else {
             CheckForRoot();
         }
+//        Cursor cursor = getContentResolver().query(
+//                PluginContract.Connections.CONTENT_URI,
+//                new String[]{PluginContract.Connections.COLUMN_ID, PluginContract.Connections.COLUMN_ADDRESS},
+//                PluginContract.Connections.COLUMN_ADDRESS + " = ?",
+//                new String[]{"127.0.0.1"}, null);
+//
+//        while (cursor.moveToNext()) {
+//
+//            // Then update them
+//            connectionId = UUID.fromString(cursor.getString(
+//                    cursor.getColumnIndex(PluginContract.Connections.COLUMN_ID)));
+//        }
+//        cursor.close();
 
         setContentView(R.layout.base_layout);
 
@@ -411,6 +429,14 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         Log.d("AppNav", "Checking for Root");
         CheckForRoot mytask = new CheckForRoot(this);
         mytask.execute();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SSHManager.REQUEST_ID && sshManager != null) {
+            sshManager.gotActivityResult(requestCode, resultCode, data);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

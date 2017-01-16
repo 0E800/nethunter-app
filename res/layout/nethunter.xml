@@ -4,14 +4,15 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:animateLayoutChanges="true">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:weightSum="1">
+        android:id="@+id/iface_parent">
 
         <TextView
             android:layout_width="match_parent"
@@ -23,71 +24,72 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/nethunter_loading_layout"
+            android:layout_marginTop="16dp">
+
+
+            <ProgressBar
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/progress_loading"
+                android:indeterminate="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_loading"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/progress_loading"
+                tools:text="Loading interface and system information..."
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:layout_marginRight="16dp" />
+
+        </RelativeLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nethunter_current_interfaces"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listViewNet" />
-
-        <TextView
-            android:id="@+id/editTextNET"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:paddingTop="8sp"
-            android:layout_marginBottom="10dp"
-            android:textSize="12sp"
-            android:typeface="monospace" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:id="@+id/nethunter_current_interfaces"
+            android:layout_gravity="bottom|left"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nethunter_hid_detect"
-            android:layout_marginTop="15dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listViewHid"
-            />
-
-        <TextView
-            android:id="@+id/editTextHID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:paddingTop="8sp"
-            android:layout_marginBottom="10dp"
-            android:textSize="12sp"
-            android:typeface="monospace" />
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:id="@+id/nethunter_hid_title"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nethunter_busybox_detect"
-            android:layout_marginTop="15dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/nethunter_hid_detect"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:id="@+id/textView" />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listViewBusybox"
-            />
+            android:id="@+id/nethunter_busybox_title"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/editTextBUSYBOX"
@@ -97,20 +99,20 @@
             android:paddingTop="8sp"
             android:layout_marginBottom="10dp"
             android:textSize="12sp"
-            android:typeface="monospace" />
+            android:typeface="monospace"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nethunter_kernelver_detect"
-            android:layout_marginTop="15dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listViewKERNELVER"
-            />
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:id="@+id/nethunter_kernel_version"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/editTextKERNELVER"
@@ -120,21 +122,19 @@
             android:paddingTop="8sp"
             android:layout_marginBottom="10dp"
             android:textSize="12sp"
-            android:typeface="monospace" />
+            android:typeface="monospace"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nethunter_terminal_detect"
-            android:layout_marginTop="15dp"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listViewNHTerminal"
-            />
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/editTextNHTerminal"
@@ -144,22 +144,28 @@
             android:paddingTop="8sp"
             android:layout_marginBottom="10dp"
             android:textSize="12sp"
-            android:typeface="monospace" />
+            android:typeface="monospace"
+            android:visibility="gone" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_gravity="bottom|left"
             android:text="@string/nethunter_external_ip"
-            android:layout_marginTop="15dp"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/nethunter_ext_ip_title"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/nethunter_ext_ip_layout"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/editText2"

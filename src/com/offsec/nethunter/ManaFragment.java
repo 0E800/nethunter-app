@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -28,6 +29,7 @@ import com.google.common.io.Files;
 import com.offsec.nethunter.utils.AutoSuggestWrapper;
 import com.offsec.nethunter.utils.NhPaths;
 import com.offsec.nethunter.utils.ShellExecuter;
+import com.sonelli.juicessh.pluginlibrary.exceptions.ServiceNotConnectedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,11 +46,19 @@ public class ManaFragment extends KaliBaseFragment {
     private static final String TAG = "ManaFragment";
     private static NhPaths nh;
     private String configFilePath;
+    private SSHManager sshManager;
 
     public static ManaFragment newInstance(int sectionNumber) {
         ManaFragment fragment = new ManaFragment();
         fragment.putSectionNumber(sectionNumber);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        sshManager = SSHManager.getInstance();
+        sshManager.connect(getActivity());
     }
 
     @Override
@@ -125,10 +135,15 @@ public class ManaFragment extends KaliBaseFragment {
                     // launching mana on the terminal so it doesnt die suddenly
                     case 0:
                         nh.showMessage("Starting MANA NAT FULL");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            intentClickListener_NH(nh.makeTermTitle("MANA-FULL") + "/usr/share/mana-toolkit/run-mana/start-nat-full-lollipop.sh");
-                        } else {
-                            intentClickListener_NH(nh.makeTermTitle("MANA-FULL") + "/usr/share/mana-toolkit/run-mana/start-nat-full-kitkat.sh");
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                            intentClickListener_NH(nh.makeTermTitle("MANA-FULL") + "/usr/share/mana-toolkit/run-mana/start-nat-full-lollipop.sh");
+//                        } else {
+//                            intentClickListener_NH(nh.makeTermTitle("MANA-FULL") + "/usr/share/mana-toolkit/run-mana/start-nat-full-kitkat.sh");
+//                        }
+                        try {
+                            sshManager.execute("/usr/share/mana-toolkit/run-mana/start-nat-full-lollipop.sh", null);
+                        } catch (ServiceNotConnectedException e) {
+                            e.printStackTrace();
                         }
                         break;
                     case 1:
