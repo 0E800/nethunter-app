@@ -7,12 +7,25 @@
         app:showAsAction="ifRoom|withText"/>
 
     <item
-        android:id="@+id/start_service"
+        android:id="@+id/start"
         android:title="@string/start_mana"
-        app:showAsAction="never" />
-
+        app:showAsAction="never"
+        android:orderInCategory="0">
+        <menu >
+            <item android:title="NAT Full"
+                android:id="@+id/mana_nat_full" />
+            <item android:title="Nat simple"
+                android:id="@+id/mana_nat_simple" />
+            <item android:title="NAT bdf"
+                android:id="@+id/mana_nat_bdf" />
+            <item android:title="Hostapd"
+                android:id="@+id/mana_hostapd" />
+        </menu>
+    </item>
     <item
         android:id="@+id/stop_service"
         android:title="@string/stop_mana"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:orderInCategory="1" />
+
 </menu>

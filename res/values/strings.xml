@@ -222,7 +222,7 @@
     <string name="drawertitlehid">HID Attacks</string>
     <string name="drawertitleduckhunter">DuckHunter HID</string>
     <string name="drawertitlebadusb">Bad USB MITM Attack</string>
-    <string name="drawertitlemana">Mana Wireless Toolkit</string>
+    <string name="drawertitlemana">Setup Mana Toolkit</string>
     <string name="drawertitlemacchanger">MAC Changer</string>
     <string name="drawertitlempc">Metasploit Payload Generator</string>
     <string name="drawertitlemitmf">MITM Framework</string>

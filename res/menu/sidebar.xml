@@ -20,13 +20,13 @@
              android:id="@+id/kalilauncher_item"
              android:icon="@drawable/ic_action_launch"
              android:title="@string/drawertitlekalilauncher" />   -->
-         <item
+        <item
              android:id="@+id/kaliservices_item"
              android:icon="@drawable/ic_action_settings_applications"
              android:title="@string/drawertitlekaliservices" />
          <item
              android:id="@+id/custom_commands_item"
-             android:icon="@drawable/ic_action_play"
+             android:icon="@drawable/ic_play_arrow_black_24dp"
              android:title="Custom Commands" />
          <item
              android:id="@+id/macchanger_item"
@@ -50,9 +50,13 @@
              android:title="@string/drawertitlebadusb" />
          <item
              android:id="@+id/mana_item"
-             android:icon="@drawable/ic_action_network_wifi"
+             android:icon="@drawable/ic_signal_wifi_1_bar_black_24dp"
              android:title="@string/drawertitlemana" />
-         <item
+        <item
+            android:id="@+id/run_mana"
+            android:icon="@drawable/ic_signal_wifi_3_bar_black_24dp"
+            android:title="Run Mana" />
+        <item
              android:id="@+id/mitmf_item"
              android:icon="@drawable/ic_share_black_24dp"
              android:title="@string/drawertitlemitmf" />

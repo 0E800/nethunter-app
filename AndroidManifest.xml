@@ -16,10 +16,28 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="com.sonelli.juicessh.api.v1.permission.JUICESSH_ONLY" />
-    <uses-permission android:name="com.sonelli.juicessh.api.v1.permission.READ_CONNECTIONS" />
-    <uses-permission android:name="com.sonelli.juicessh.api.v1.permission.OPEN_SESSIONS" />
 
+    <uses-permission
+        android:name="com.sonelli.juicessh.api.v1.permission.READ_CONNECTIONS" />
+    <uses-permission
+        android:name="com.sonelli.juicessh.api.v1.permission.WRITE_CONNECTIONS" />
+    <!--<uses-permission-->
+        <!--android:name="com.sonelli.juicessh.api.v1.permission.READ_SNIPPETS" />-->
+    <!--<uses-permission-->
+        <!--android:name="com.sonelli.juicessh.api.v1.permission.WRITE_SNIPPETS" />-->
+    <!--<uses-permission-->
+        <!--android:name="com.sonelli.juicessh.api.v1.permission.READ_PORT_FORWARDS" />-->
+    <!--<uses-permission-->
+        <!--android:name="com.sonelli.juicessh.api.v1.permission.WRITE_PORT_FORWARDS" />-->
+    <!--<uses-permission-->
+        <!--android:name="com.sonelli.juicessh.api.v1.permission.READ_CONNECTION_GROUPS" />-->
+<!---->
+    <!--<uses-permission-->
+        <!--android:name="com.sonelli.juicessh.api.v1.permission.WRITE_CONNECTION_GROUPS" />-->
+    <uses-permission
+        android:name="com.sonelli.juicessh.api.v1.permission.OPEN_SESSIONS" />
+    <!--<uses-permission-->
+        <!--android:name="com.sonelli.juicessh.api.v1.permission.READ_PLUGIN_LOG" />-->
 
     <supports-screens
         android:anyDensity="true"
@@ -61,20 +79,20 @@
                 android:value=".EditSourceActivity" />
         </activity>
 
-        <updateReceiver android:name=".updateReceiver.BootCompletedReceiver">
+        <receiver android:name=".receiver.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </updateReceiver>
+        </receiver>
 
         <service
             android:name=".service.RunAtBootService"
             android:exported="false"
             android:process=":runAtBoot" />
         <service
-            android:name=".GPS.LocationUpdateService"
+            android:name=".gps.LocationUpdateService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false"/>
     </application>
 
 </manifest>

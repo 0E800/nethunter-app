@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -33,16 +32,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.offsec.nethunter.GPS.KaliGPSUpdates;
-import com.offsec.nethunter.GPS.LocationUpdateService;
+import com.offsec.nethunter.gps.KaliGPSUpdates;
+import com.offsec.nethunter.gps.LocationUpdateService;
+import com.offsec.nethunter.ssh.SSHFragment;
 import com.offsec.nethunter.utils.CheckForRoot;
-import com.sonelli.juicessh.pluginlibrary.PluginContract;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Stack;
-import java.util.UUID;
 
 public class AppNavHomeActivity extends AppCompatActivity implements
         KaliGPSUpdates.Provider, FragmentSwitcher {
@@ -66,11 +64,16 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     private Integer permsCurrent = 1;
     private boolean locationUpdatesRequested = false;
     private KaliGPSUpdates.Receiver locationUpdateReceiver;
-    private SSHManager sshManager = null;
-    private UUID connectionId;
 
     public static Context getAppContext() {
         return c;
+    }
+
+    private ActivityResultListener activityResultListener = null;
+
+
+    public interface ActivityResultListener {
+        void onActivityResult(int requestCode, int resultCode, Intent data);
     }
 
     @Override
@@ -291,6 +294,13 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                         .commit();
                 break;
             */
+            case R.id.run_mana:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, SSHFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
             case R.id.kaliservices_item:
                 fragmentManager
                         .beginTransaction()
@@ -432,14 +442,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SSHManager.REQUEST_ID && sshManager != null) {
-            sshManager.gotActivityResult(requestCode, resultCode, data);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
         if (titles.size() > 1) {
@@ -508,7 +510,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements
             }
         }
         if (permnum == 5) {
-            Log.d("HOLA", "CODE0: " + permnum);
+            Log.d("AA", "CODE0: " + permnum);
             if (ContextCompat.checkSelfPermission(this,
                     "com.offsec.nhterm.permission.RUN_SCRIPT_NH_LOGIN")
                     != PackageManager.PERMISSION_GRANTED) {
@@ -552,16 +554,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
             CheckForRoot();
         }
 
-        if (permnum == 9) {
-            Log.d("HOLA", "CODE0: " + permnum);
-            if (ContextCompat.checkSelfPermission(this,
-                    "com.sonelli.juicessh.api.v1.permission.JUICESSH_ONLY")
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{"com.sonelli.juicessh.api.v1.permission.JUICESSH_ONLY"},
-                        9);
-            }
-        }
     }
 
     @Override
@@ -583,6 +575,14 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (activityResultListener != null) {
+            activityResultListener.onActivityResult(requestCode, resultCode, data);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onLocationUpdatesRequested(KaliGPSUpdates.Receiver receiver) {
         locationUpdatesRequested = true;
         this.locationUpdateReceiver = receiver;
@@ -591,7 +591,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     }
 
     private LocationUpdateService locationService;
-    private boolean updateServiceBound = false;
     private ServiceConnection locationServiceConnection = new ServiceConnection() {
 
         @Override
@@ -600,7 +599,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
             // We've bound to Update Service, cast the IBinder and get LocalService instance
             LocationUpdateService.ServiceBinder binder = (LocationUpdateService.ServiceBinder) service;
             locationService = binder.getService();
-            updateServiceBound = true;
             if (locationUpdatesRequested) {
                 locationService.requestUpdates(locationUpdateReceiver);
             }
@@ -609,7 +607,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            updateServiceBound = false;
+
         }
     };
 

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -29,16 +28,17 @@ import com.google.common.io.Files;
 import com.offsec.nethunter.utils.AutoSuggestWrapper;
 import com.offsec.nethunter.utils.NhPaths;
 import com.offsec.nethunter.utils.ShellExecuter;
-import com.sonelli.juicessh.pluginlibrary.exceptions.ServiceNotConnectedException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class ManaFragment extends KaliBaseFragment {
 
+    public static final int REQUEST_ID = 492;
     private ViewPager mViewPager;
 
     private Integer selectedScriptIndex = 0;
@@ -46,7 +46,10 @@ public class ManaFragment extends KaliBaseFragment {
     private static final String TAG = "ManaFragment";
     private static NhPaths nh;
     private String configFilePath;
-    private SSHManager sshManager;
+    private boolean sshReady = false;
+    private UUID connectionId;
+    private int sessionID = -1;
+    private String sessionKey = null;
 
     public static ManaFragment newInstance(int sectionNumber) {
         ManaFragment fragment = new ManaFragment();
@@ -55,17 +58,11 @@ public class ManaFragment extends KaliBaseFragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        sshManager = SSHManager.getInstance();
-        sshManager.connect(getActivity());
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         nh = new NhPaths();
         View rootView = inflater.inflate(R.layout.mana, container, false);
         TabsPagerAdapter tabsPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
+
 
         mViewPager = (ViewPager) rootView.findViewById(R.id.pagerMana);
         mViewPager.setAdapter(tabsPagerAdapter);
@@ -108,9 +105,16 @@ public class ManaFragment extends KaliBaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
+//Todo: switch executable with android version and with preference to use native or juicessh
         switch (item.getItemId()) {
-            case R.id.start_service:
-                startMana();
+            case R.id.mana_nat_full:
+                return true;
+            case R.id.mana_nat_simple:
+//                try {
+//                    sshManager.execute(getActivity(), "/usr/share/mana-toolkit/run-mana/start-nat-simple-lollipop.sh", null, null);
+//                } catch (ServiceNotConnectedException e) {
+//                    e.printStackTrace();
+//                }
                 return true;
             case R.id.stop_service:
                 stopMana();
@@ -125,6 +129,7 @@ public class ManaFragment extends KaliBaseFragment {
         }
     }
 
+
     private void startMana() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Script to execute:");
@@ -134,17 +139,12 @@ public class ManaFragment extends KaliBaseFragment {
                 switch (selectedScriptIndex) {
                     // launching mana on the terminal so it doesnt die suddenly
                     case 0:
-                        nh.showMessage("Starting MANA NAT FULL");
 //                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                            intentClickListener_NH(nh.makeTermTitle("MANA-FULL") + "/usr/share/mana-toolkit/run-mana/start-nat-full-lollipop.sh");
 //                        } else {
 //                            intentClickListener_NH(nh.makeTermTitle("MANA-FULL") + "/usr/share/mana-toolkit/run-mana/start-nat-full-kitkat.sh");
 //                        }
-                        try {
-                            sshManager.execute("/usr/share/mana-toolkit/run-mana/start-nat-full-lollipop.sh", null);
-                        } catch (ServiceNotConnectedException e) {
-                            e.printStackTrace();
-                        }
+
                         break;
                     case 1:
                         nh.showMessage("Starting MANA NAT SIMPLE");
@@ -216,6 +216,7 @@ public class ManaFragment extends KaliBaseFragment {
         exe.RunAsRoot(command);
         nh.showMessage("Mana Stopped");
     }
+
 
     public class TabsPagerAdapter extends FragmentPagerAdapter {
 
@@ -312,7 +313,6 @@ public class ManaFragment extends KaliBaseFragment {
                             (AppCompatAutoCompleteTextView) rootView.findViewById(R.id.ssid),
                             android.R.layout.simple_list_item_1, null);
 
-
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -353,7 +353,6 @@ public class ManaFragment extends KaliBaseFragment {
 
             return rootView;
         }
-
 
         public void loadOptions(View rootView) {
 
@@ -812,6 +811,7 @@ public class ManaFragment extends KaliBaseFragment {
             return rootView;
         }
     }
+
 
     public static class ManaStartNatSimpleBdfFragment extends Fragment {
 

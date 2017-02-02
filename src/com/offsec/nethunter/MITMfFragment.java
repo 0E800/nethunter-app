@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,8 +37,8 @@ public class MITMfFragment extends Fragment {
 
     View.OnClickListener checkBoxListener;
     // ^^ \\
-    // static String CommandComposed = "";
-    private static final ArrayList<String> CommandComposed = new ArrayList<>();
+    // static String commandComposed = "";
+    private static final ArrayList<String> commandComposed = new ArrayList<>();
 
     /* All MITMf General Command Variables */
 
@@ -147,7 +148,6 @@ public class MITMfFragment extends Fragment {
             }
         });
         setHasOptionsMenu(true);
-        SharedPreferences sharedpreferences = getActivity().getSharedPreferences("com.offsec.nethunter", Context.MODE_PRIVATE);
         return rootView;
     }
 
@@ -237,7 +237,7 @@ public class MITMfFragment extends Fragment {
     }
     /* Stop Tabs */
 
-    public static class MITMfGeneral extends MITMfFragment implements View.OnClickListener {
+    public static class MITMfGeneral extends MITMfFragment  {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -253,7 +253,6 @@ public class MITMfFragment extends Fragment {
             interfaceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    String selectedItemText = parent.getItemAtPosition(pos).toString();
                     switch (pos) {
                         case 0:
                             // Interface: wlan0
@@ -295,131 +294,40 @@ public class MITMfFragment extends Fragment {
             });
 
             // Checkbox for JSKeyLogger Checkbox
-            final CheckBox jskeylogCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_jskey);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(jskeylogCheckbox.isChecked()) {
-                        M_JSKeyLogger = " --jskeylogger";
-                        Log.d("MITMf:", M_JSKeyLogger);
-                        addToCmd(M_JSKeyLogger);
-                    }else{
-                        removeFromCmd(M_JSKeyLogger);
-                    }
-                }
-            };
-            jskeylogCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_jskey))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --jskeylogger"));
 
             // Checkbox for FerretNG Checkbox
-            final CheckBox ferretNGCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_ferretng);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(ferretNGCheckbox.isChecked()) {
-                        M_FerretNG = " --ferretng";
-                        addToCmd(M_FerretNG);
-                    }else{
-                        removeFromCmd(M_FerretNG);
-                    }
-                }
-            };
-            ferretNGCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_ferretng))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --ferretng"));
 
             // Checkbox for BrowserProfiler Checkbox
-            final CheckBox BrowserProfilerCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_browserprofile);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(BrowserProfilerCheckbox.isChecked()) {
-                        M_BrowserProfiler = " --browserprofiler";
-                        addToCmd(M_BrowserProfiler);
-                    }else{
-                        removeFromCmd(M_BrowserProfiler);
-                    }
-                }
-            };
-            BrowserProfilerCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_browserprofile))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --browserprofiler"));
 
             // Checkbox for FilePWN Checkbox
-            final CheckBox FilePWNCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_filepwn);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(FilePWNCheckbox.isChecked()) {
-                        M_FilePWN = " --filepwn";
-                        addToCmd(M_FilePWN);
-                    }else{
-                        removeFromCmd(M_FilePWN);
-                    }
-                }
-            };
-            FilePWNCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_filepwn))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --filepwn"));
 
             // Checkbox for BeeF AutoRUN Checkbox
-            final CheckBox BeeFAutoCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_beef);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(BeeFAutoCheckbox.isChecked()) {
-                        M_BeeF = " --beefauto";
-                        addToCmd(M_BeeF);
-                    }else{
-                        removeFromCmd(M_BeeF);
-                    }
-                }
-            };
-            BeeFAutoCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_beef))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --beefauto"));
 
             // Checkbox for SMB Checkbox
-            final CheckBox SMBCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_smb);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(SMBCheckbox.isChecked()) {
-                        M_SMB = " --smbauth";
-                        addToCmd(M_SMB);
-                    }else{
-                        removeFromCmd(M_SMB);
-                    }
-                }
-            };
-            SMBCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_smb))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --smbauth"));
 
             // Checkbox for SSLStrip
-            final CheckBox SSLStripCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_sslstrip);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(SSLStripCheckbox.isChecked()) {
-                        M_SSLStrip = " --hsts";
-                        addToCmd(M_SSLStrip);
-                    }else{
-                        removeFromCmd(M_SSLStrip);
-                    }
-                }
-            };
-            SSLStripCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_sslstrip))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --hsts"));
 
             // Checkbox for App Cache Poison
-            final CheckBox APPCachePoisonCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_app_poison);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(APPCachePoisonCheckbox.isChecked()) {
-                        M_App_Poison = " --appoison";
-                        addToCmd(M_App_Poison);
-                    }else{
-                        removeFromCmd(M_App_Poison);
-                    }
-                }
-            };
-            APPCachePoisonCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_app_poison))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --appoison"));
 
             // Checkbox for UpsideDownInternet
-            final CheckBox UpsideDownCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_upsidedown);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(UpsideDownCheckbox.isChecked()) {
-                        M_UpsideDown = " --upsidedownternet";
-                        addToCmd(M_UpsideDown);
-                    }else{
-                        removeFromCmd(M_UpsideDown);
-                    }
-                }
-            };
-            UpsideDownCheckbox.setOnClickListener(checkBoxListener);
+            ((CheckBox) rootView.findViewById(R.id.mitmf_upsidedown))
+                    .setOnCheckedChangeListener(new ManaClickListener(" --upsidedowninternet"));
 
             // ScreenShotter Interval Time
             M_ScreenIntervalTime = (EditText) rootView.findViewById(R.id.mitmf_screen_interval);
@@ -475,9 +383,21 @@ public class MITMfFragment extends Fragment {
             return rootView;
         }
 
-        @Override
-        public void onClick(View v) {
+    }
 
+    public static class ManaClickListener implements CheckBox.OnCheckedChangeListener {
+        private final String command;
+
+        ManaClickListener(String command) {
+            this.command = command;
+        }
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                commandComposed.add(command);
+            } else {
+                commandComposed.remove(command);
+            }
         }
     }
 
@@ -489,33 +409,16 @@ public class MITMfFragment extends Fragment {
             View rootView = inflater.inflate(R.layout.mitmf_inject, container, false);
 
             // Checkbox for Injection Preserve Cache
-            final CheckBox InjectionPreserveCacheCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_inject_preservecache);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(InjectionPreserveCacheCheckbox.isChecked()) {
-                        M_Injection_Preserve_Cache = " --preserve-cache";
-                        addToCmd(M_Injection_Preserve_Cache);
-                    }else{
-                        removeFromCmd(M_Injection_Preserve_Cache);
-                    }
-                }
-            };
-            InjectionPreserveCacheCheckbox.setOnClickListener(checkBoxListener);
+            final CheckBox InjectionPreserveCacheCheckbox =
+                    (CheckBox) rootView.findViewById(R.id.mitmf_inject_preservecache);
+            InjectionPreserveCacheCheckbox
+                    .setOnCheckedChangeListener(new ManaClickListener(" --preserve-cache"));
+
 
             // Checkbox for Injection Once Per Domain
-            final CheckBox InjectionPerDomainCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_inject_onceperdomain);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(InjectionPerDomainCheckbox.isChecked()) {
-                        M_Injection_Per_Domain = " --per-domain";
-                        addToCmd(M_Injection_Per_Domain);
-                    }else{
-                        M_Injection_Per_Domain = "";
-                        removeFromCmd(M_Injection_Per_Domain);
-                    }
-                }
-            };
-            InjectionPerDomainCheckbox.setOnClickListener(checkBoxListener);
+            final CheckBox InjectionPerDomainCheckbox =
+                    (CheckBox) rootView.findViewById(R.id.mitmf_inject_onceperdomain);
+                    InjectionPerDomainCheckbox.setOnCheckedChangeListener(new ManaClickListener(" --per-domain"));
 
             // Textfield JS URL
             M_Injection_JSURL_Text = (EditText) rootView.findViewById(R.id.mitmf_injectjs_url);
@@ -1353,32 +1256,12 @@ public class MITMfFragment extends Fragment {
 
             // Checkbox for WAPD
             final CheckBox ResponderWPADCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_responder_WPAD);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(ResponderWPADCheckbox.isChecked()) {
-                        M_Responder_WPAD = " --wpad";
-                        addToCmd(M_Responder_WPAD);
-                    }else{
-                        removeFromCmd(M_Responder_WPAD);
-                    }
-                }
-            };
-            ResponderWPADCheckbox.setOnClickListener(checkBoxListener);
+            ResponderWPADCheckbox.setOnCheckedChangeListener(
+                    new ManaClickListener(" --wpad"));
 
             // Checkbox for Provider WREDIR
-            final CheckBox ResponderWRedirCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_responder_WREDIR);
-            checkBoxListener =new View.OnClickListener() {
-                public void onClick(View v) {
-                    if(ResponderWRedirCheckbox.isChecked()) {
-                        M_Responder_WRedir = " --wredir";
-                        addToCmd(M_Responder_WRedir);
-                    }else{
-                        removeFromCmd(M_Responder_WRedir);
-                    }
-                }
-            };
-            ResponderWRedirCheckbox.setOnClickListener(checkBoxListener);
-
+            final CheckBox responderWRedirCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_responder_WREDIR);
+            responderWRedirCheckbox.setOnCheckedChangeListener(new ManaClickListener(" --wredir"));
 
             // Checkbox for Provider
             final CheckBox ResponderCheckbox = (CheckBox) rootView.findViewById(R.id.mitmf_responder);
@@ -1393,7 +1276,7 @@ public class MITMfFragment extends Fragment {
                         ResponderDowngradeCheckbox.setEnabled(true);
                         ResponderNBTNSCheckbox.setEnabled(true);
                         ResponderWPADCheckbox.setEnabled(true);
-                        ResponderWRedirCheckbox.setEnabled(true);
+                        responderWRedirCheckbox.setEnabled(true);
                     }else{
                         removeFromCmd(M_Responder);
                         removeFromCmd(M_Responder_Analyze);
@@ -1409,7 +1292,7 @@ public class MITMfFragment extends Fragment {
                         ResponderDowngradeCheckbox.setChecked(false);
                         ResponderNBTNSCheckbox.setChecked(false);
                         ResponderWPADCheckbox.setChecked(false);
-                        ResponderWRedirCheckbox.setChecked(false);
+                        responderWRedirCheckbox.setChecked(false);
 
                         /* Don't allow checkboxes to be enabled if Provider not activated */
                         ResponderAnalyzeCheckbox.setEnabled(false);
@@ -1417,7 +1300,7 @@ public class MITMfFragment extends Fragment {
                         ResponderDowngradeCheckbox.setEnabled(false);
                         ResponderNBTNSCheckbox.setEnabled(false);
                         ResponderWPADCheckbox.setEnabled(false);
-                        ResponderWRedirCheckbox.setEnabled(false);                    }
+                        responderWRedirCheckbox.setEnabled(false);                    }
                 }
             };
             ResponderCheckbox.setOnClickListener(checkBoxListener);
@@ -1428,7 +1311,7 @@ public class MITMfFragment extends Fragment {
             ResponderDowngradeCheckbox.setEnabled(false);
             ResponderNBTNSCheckbox.setEnabled(false);
             ResponderWPADCheckbox.setEnabled(false);
-            ResponderWRedirCheckbox.setEnabled(false);
+            responderWRedirCheckbox.setEnabled(false);
 
 
             return rootView;
@@ -1475,26 +1358,26 @@ public class MITMfFragment extends Fragment {
     }
 
     private String getCmd(){
-        String genCmd = "";
-        for (int j = CommandComposed.size()-1; j >= 0; j--) {
-            genCmd = genCmd + CommandComposed.get(j);
+        StringBuilder builder = new StringBuilder();
+        for (int j = commandComposed.size()-1; j >= 0; j--) {
+            builder.append(commandComposed.get(j));
         }
-        Log.d("MITMF CMD OUTPUT: ", "mitmf " + genCmd);
-
-        return genCmd;
+        Log.d("MITMF CMD OUTPUT: ", "mitmf " + builder.toString());
+        return builder.toString();
     }
+
     private static void cleanCmd() {
-        for (int j = CommandComposed.size()-1; j >= 0; j--) {
-                CommandComposed.remove(j);
+        for (int j = commandComposed.size()-1; j >= 0; j--) {
+                commandComposed.remove(j);
         }
     }
     private static void addToCmd(String opt) {
-        CommandComposed.add(opt);
+        commandComposed.add(opt);
     }
     private static void removeFromCmd(String opt) {
-        for (int j = CommandComposed.size()-1; j >= 0; j--) {
-            if(CommandComposed.get(j).equals(opt))
-                CommandComposed.remove(j);
+        for (int j = commandComposed.size()-1; j >= 0; j--) {
+            if(commandComposed.get(j).equals(opt))
+                commandComposed.remove(j);
         }
     }
     private void intentClickListener_NH(final String command) {
