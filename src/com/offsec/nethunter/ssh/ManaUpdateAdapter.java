@@ -12,33 +12,39 @@ import com.offsec.nethunter.R;
 
 import java.util.ArrayList;
 
-public class ManaSSIDAdapter {
+import static android.R.attr.animationDuration;
+
+public class ManaUpdateAdapter {
     private final LinearLayout parent;
     private final LayoutInflater layoutInflater;
+    private final int animationStartDelay;
+    private final int animationDuration;
 
-    public ManaSSIDAdapter(LinearLayout parent) {
+    public ManaUpdateAdapter(LinearLayout parent, int animationStartDelay, int animationDuration) {
         this.parent = parent;
         this.layoutInflater = LayoutInflater.from(parent.getContext());
+        this.animationStartDelay = animationStartDelay;
+        this.animationDuration = animationDuration;
     }
     private ArrayList<ViewHolder> viewHolders = new ArrayList<>();
-    private ArrayList<String> ssids = new ArrayList<>();
+    private ArrayList<String> textList = new ArrayList<>();
 
     private final EventUpdateListener listener = new EventUpdateListener() {
         @Override
         public synchronized void onViewFadedOut(ViewHolder viewHolder) {
             parent.removeView(viewHolder.tv);
-            ssids.remove(viewHolder.ssid);
+            textList.remove(viewHolder.text);
             viewHolders.remove(viewHolder);
         }
     };
 
 
-    public void ssidUpdate(String ssid) {
-        int ind = ssids.indexOf(ssid);
+    public void onTextUpdated(String text) {
+        int ind = textList.indexOf(text);
         if (ind == -1) {
-            ViewHolder vh = new ViewHolder(listener, ssid);
+            ViewHolder vh = new ViewHolder(listener, text, animationStartDelay, animationDuration);
             vh.bind(layoutInflater, parent);
-            ssids.add(ssid);
+            textList.add(text);
             viewHolders.add(vh);
         } else {
             viewHolders.get(ind).resetAnimator();
@@ -47,7 +53,7 @@ public class ManaSSIDAdapter {
 
     public void resetAll() {
         parent.removeAllViews();
-        ssids = new ArrayList<>();
+        textList = new ArrayList<>();
         viewHolders = new ArrayList<>();
     }
 
@@ -60,27 +66,29 @@ public class ManaSSIDAdapter {
 
 
     public static class ViewHolder {
-        private static final long START_DELAY = 2000;
-        private static final int FADE_DURATION = 5000;
         private EventUpdateListener listener;
-        public String ssid;
+        public String text;
+        private final int animationStartDelay;
+        private final int animationDuration;
         TextView tv;
         ObjectAnimator animator;
 
 
-        public ViewHolder(EventUpdateListener listener, String ssid) {
+        public ViewHolder(EventUpdateListener listener, String text, int animationStartDelay, int animationDuration) {
 
             this.listener = listener;
-            this.ssid = ssid;
+            this.text = text;
+            this.animationStartDelay = animationStartDelay;
+            this.animationDuration = animationDuration;
         }
 
         public synchronized TextView bind(LayoutInflater inflater, ViewGroup parent) {
             tv = (TextView) inflater.inflate(R.layout.mana_ssid_textview, parent, false);
             parent.addView(tv);
-            tv.setText(ssid);
-            animator = ObjectAnimator.ofFloat(tv, "alpha", 1f, 0.1f);
-            animator.setStartDelay(START_DELAY);
-            animator.setDuration(FADE_DURATION);
+            tv.setText(text);
+            animator = ObjectAnimator.ofFloat(tv, "alpha", 1f, 0f);
+            animator.setStartDelay(animationStartDelay);
+            animator.setDuration(animationDuration);
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -98,7 +106,6 @@ public class ManaSSIDAdapter {
 
         public void resetAnimator() {
             animator.start();
-//            animator.start();
         }
 
 
