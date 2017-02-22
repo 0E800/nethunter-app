@@ -1,101 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/ssid_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/heading_background"
+        android:paddingBottom="4dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:text="SSIDs Probed"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
     <Button
-        android:text="Start Mana"
+        android:id="@+id/ssh_run"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:id="@+id/ssh_run"
-        android:layout_alignParentRight="false"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="false"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentTop="false"
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginTop="4dp" />
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:text="Start Mana" />
 
     <Button
-        android:text="Stop Mana"
+        android:id="@+id/ssh_stop"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:id="@+id/ssh_stop"
-        android:layout_alignParentTop="false"
-        android:layout_toStartOf="@+id/ssh_run"
         android:layout_alignParentBottom="true"
-        android:layout_margin="4dp" />
+        android:layout_alignParentTop="false"
+        android:layout_margin="4dp"
+        android:layout_toStartOf="@+id/ssh_run"
+        android:text="Stop Mana" />
 
     <TextView
+        android:id="@+id/connected_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Clients:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_alignBaseline="@+id/ssid_label"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="52dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/connected_label"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@+id/num_connected" />
+        android:text="Clients:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
     <TextView
+        android:id="@+id/num_connected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_alignBaseline="@+id/ssid_label"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="32dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/num_connected"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SSIDs Probed"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_below="@+id/connected_label"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/ssid_label" />
+        android:text="0"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_below="@+id/ssid_label"
+        android:id="@+id/mana_layout_left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/mana_layout_left"
-        android:animateLayoutChanges="false"
-        android:minHeight="224dp">
+        android:layout_below="@+id/ssid_label"
+        android:minHeight="224dp"
+        android:orientation="vertical">
 
     </LinearLayout>
 
     <TextView
+        android:id="@+id/sites_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Connected sites"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_below="@+id/mana_layout_left"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/sites_label"/>
+        android:background="@color/heading_background"
+        android:paddingBottom="4dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:text="Connected sites"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-
-    <TextView
-        android:id="@+id/ssh_status"
+    <LinearLayout
+        android:id="@+id/ll_cert"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sites_label"
+        android:orientation="vertical">
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/status_slide"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@color/heading_background"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp" />
+
+        <TextView
+            android:id="@+id/ssh_status"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
 </RelativeLayout>

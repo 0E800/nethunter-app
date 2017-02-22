@@ -339,7 +339,7 @@ public class ManaFragment extends KaliBaseFragment {
                     if (source != null) {
                         source = source.replaceAll("(?m)^interface=(.*)$", "interface=" + ifcSuggest.getText());
                         source = source.replaceAll("(?m)^bssid=(.*)$", "bssid=" + bssid.getText().toString());
-                        source = source.replaceAll("(?m)^ssid=(.*)$", "ssid=" + ssidSuggest.getText());
+                        source = source.replaceAll("(?m)^ssid=(.*)$", "text=" + ssidSuggest.getText());
                         source = source.replaceAll("(?m)^channel=(.*)$", "channel=" + channel.getText().toString());
                         source = source.replaceAll("(?m)^enable_mana=(.*)$", "enable_mana=" + enableKarma.getText().toString());
                         source = source.replaceAll("(?m)^mana_loud=(.*)$", "mana_loud=" + karmaLoud.getText().toString());
@@ -412,7 +412,7 @@ public class ManaFragment extends KaliBaseFragment {
                                 bssid.setText(bssidVal);
                             }
                         /*
-                         * ssid
+                         * text
                          */
                             if (matcherSsid.find()) {
                                 String ssidVal = matcherSsid.group(1);
@@ -493,7 +493,7 @@ public class ManaFragment extends KaliBaseFragment {
                     if (source != null) {
                         source = source.replaceAll("(?m)^interface=(.*)$", "interface=" + ifc.getText().toString());
                         source = source.replaceAll("(?m)^bssid=(.*)$", "bssid=" + bssid.getText().toString());
-                        source = source.replaceAll("(?m)^ssid=(.*)$", "ssid=" + ssid.getText().toString());
+                        source = source.replaceAll("(?m)^ssid=(.*)$", "text=" + ssid.getText().toString());
                         source = source.replaceAll("(?m)^channel=(.*)$", "channel=" + channel.getText().toString());
                         source = source.replaceAll("(?m)^private_key_passwd=(.*)$", "private_key_passwd=" + privatekey.getText().toString());
 
@@ -559,7 +559,7 @@ public class ManaFragment extends KaliBaseFragment {
                                 bssid.setText(bssidVal);
                             }
                         /*
-                         * ssid
+                         * text
                          */
                             if (matcherSsid.find()) {
                                 String ssidVal = matcherSsid.group(1);

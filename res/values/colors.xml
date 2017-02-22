@@ -10,6 +10,9 @@
     <item name="darkTitle" type="color">#444</item>
 
     <color name="material_blue_grey_950" tools:override="true">#ff21272b</color>
+    <color name="material_blue_grey_800" tools:override="true">#ff37474f</color>
+    <color name="heading_background" tools:override="true">#30393e</color>
+
     <color name="white">#ffffff</color>
 
 
