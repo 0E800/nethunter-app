@@ -34,7 +34,7 @@ import android.widget.TextView;
 
 import com.offsec.nethunter.gps.KaliGPSUpdates;
 import com.offsec.nethunter.gps.LocationUpdateService;
-import com.offsec.nethunter.ssh.SSHFragment;
+import com.offsec.nethunter.ssh.PlayManaFragment;
 import com.offsec.nethunter.utils.CheckForRoot;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
@@ -297,7 +297,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements
             case R.id.run_mana:
                 fragmentManager
                         .beginTransaction()
-                        .replace(R.id.container, SSHFragment.newInstance(itemId))
+                        .replace(R.id.container, PlayManaFragment.newInstance(itemId))
                         .addToBackStack(null)
                         .commit();
                 break;

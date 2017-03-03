@@ -4,10 +4,9 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,11 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.offsec.nethunter.KaliBaseFragment;
+import com.offsec.nethunter.PlayManaBinding;
+import com.offsec.nethunter.PlayManaViewModel;
 import com.offsec.nethunter.R;
 import com.offsec.nethunter.utils.FileWriter;
 import com.offsec.nethunter.utils.QueuedTextViewWrapper;
@@ -34,20 +33,19 @@ import com.sshtools.ssh.SshException;
 import com.sshtools.ssh.SshSession;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class SSHFragment extends KaliBaseFragment {
+public class PlayManaFragment extends KaliBaseFragment {
 
     private ManaUpdateAdapter ssidAdapter;
     private ManaUpdateAdapter certificateAdapter;
     private SshConnector con;
-    private Button sshStopButton;
-    private TextView numClientsView;
-    private int numClients = 0;
     private Pattern p = Pattern.compile("'([^']+)'");
     private FileWriter fileWriter;
     private SshSession session = null;
@@ -55,17 +53,18 @@ public class SSHFragment extends KaliBaseFragment {
     private boolean shellStarted = false;
     private int textColorSecondary;
     private QueuedTextViewWrapper queuedTextViewWrapper;
+    private final PlayManaViewModel viewModel = new PlayManaViewModel();
+    private PlayManaBinding binding;
 
 
-    public static Fragment newInstance(int itemId) {
-        SSHFragment fragment = new SSHFragment();
+    public static PlayManaFragment newInstance(int itemId) {
+        PlayManaFragment fragment = new PlayManaFragment();
         fragment.putSectionNumber(itemId);
         return fragment;
     }
 
     @Override
     public void onAttach(Context context) {
-        fileWriter = new FileWriter(context);
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(android.R.attr.textColorSecondary, typedValue, true);
@@ -85,7 +84,8 @@ public class SSHFragment extends KaliBaseFragment {
         if (item.getItemId() == R.id.menu_start_mana) {
             executeCommand("start-mana-full-lollipop");
             return true;
-        } else if (item.getItemId() == R.id.menu_start_mana) {
+        } else if (item.getItemId() == R.id.menu_stop_mana) {
+
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -95,16 +95,20 @@ public class SSHFragment extends KaliBaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.play_mana_fragment, container, false);
+        binding = PlayManaBinding.inflate(inflater, container, false);
+        binding.setViewModel(viewModel);
 
-        ((Button) v.findViewById(R.id.ssh_run)).setOnClickListener(new View.OnClickListener() {
+
+        binding.sshRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fileWriter = new FileWriter();
                 executeCommand("start-mana-full-lollipop");
+                showStatus("Mana started");
+//                replayFromFile();
             }
         });
-        sshStopButton = (Button) v.findViewById(R.id.ssh_stop);
-        sshStopButton.setOnClickListener(new View.OnClickListener() {
+        binding.sshStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -115,21 +119,49 @@ public class SSHFragment extends KaliBaseFragment {
                         @Override
                         public void run() {
                             ssidAdapter.resetAll();
-                            showStatus("", false);
+                            showStatus("");
                         }
                     });
-                    numClients = 0;
+                    viewModel.resetClients();
+                    fileWriter.closeFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
             }
         });
-        queuedTextViewWrapper = new QueuedTextViewWrapper(
-                (TextView) v.findViewById(R.id.ssh_status));
-        numClientsView = (TextView) v.findViewById(R.id.num_connected);
+        queuedTextViewWrapper = new QueuedTextViewWrapper(binding.sshStatus);
 
-        return v;
+        return binding.getRoot();
+    }
+
+    private void replayFromFile() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File path = Environment.getExternalStoragePublicDirectory("/output/");
+
+//Get the text file
+                File file = new File(path,"manareally.txt");
+
+//Read text from file
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        Thread.sleep(500);
+                        processShellOutput(line);
+                    }
+                    br.close();
+                }
+                catch (IOException e) {
+                    //You'll need to add proper error handling here
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        })
+                .start();
     }
 
     @Override
@@ -160,11 +192,10 @@ public class SSHFragment extends KaliBaseFragment {
             while (m.find()) {
                 String ssid = received.substring(m.start() + 1, m.end() - 1);
 //                    must be run on ui thread
-                new SSIDAdapterUIThread(getActivity(), ssid, ssidAdapter).run();
+                new ViewAdapter(getActivity(), ssid, ssidAdapter).run();
             }
         } else if (received.contains("Attempting")) {
             String attemptingLine = received.split("response : ")[1];
-
             String ssid;
             if (attemptingLine.contains("(")) {
                 ssid = attemptingLine.split(" (.*) ")[0].trim();
@@ -172,47 +203,51 @@ public class SSHFragment extends KaliBaseFragment {
                 ssid = attemptingLine.split(" for")[0].trim();
             }
             //                    must be run on ui thread
-            new SSIDAdapterUIThread(getActivity(), ssid, ssidAdapter).run();
+            new ViewAdapter(getActivity(), ssid, ssidAdapter).run();
+
         } else if (received.contains("AP-STA-CONNECTED")) {
-            numClients++;
-            new SetTextUIThread(getActivity(), String.valueOf(numClients), numClientsView).run();
+           viewModel.incrementConnected();
         } else if (received.contains("AP-STA-DISCONNECTED")) {
-            numClients--;
-            new SetTextUIThread(getActivity(), String.valueOf(numClients), numClientsView).run();
+            viewModel.decrementConnected();
         } else if (received.contains("STA to kernel")) {
 //                couldn't add station to kernel driver
-            showStatus("Max connections for kernel reached", true);
-        } else if (received.contains("Original server certificate:")) {
-            certificateAdapter.onTextUpdated(received.substring(received.indexOf("/CN=") + 1));
+            showStatus("Max connections for kernel reached");
+
+        } else if (received.contains("Subject DN:")) {
+            String cert = received.split("O=")[1];
+            cert = cert.substring(0, cert.indexOf('/'));
+
+            new ViewAdapter(getActivity(), cert, certificateAdapter).run();
+
         } else if (received.contains("could not read interface")) {
-            showStatus("Could not read interface. Stopping processes", true);
-            sshStopButton.callOnClick();
-        }
-        if (received.contains("UNINITIALIZED->Enabled")) {
-            showStatus("Access Point Enabled", false);
-        }
-        if (received.contains("Hit enter to kill me")) {
-            showStatus("Mana fully started", false);
+            showStatus("Could not read interface. Stopping processes");
+            binding.sshStop.callOnClick();
+        } else if (received.contains("AP-ENABLED")) {
+            showStatus("Access Point Enabled");
+        } else if (received.contains("Hit enter to kill me")) {
+            showStatus("Mana fully started");
+        } else if (received.contains("Cannot find device")) {
+            showStatus("**Could not find device...stopping mana**");
+            binding.getRoot().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.sshStop.callOnClick();
+                }
+            }, 5000);
         }
 
         Log.d("Received", received);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        fileWriter.closeFile();
-    }
-
-    private static class SSIDAdapterUIThread implements Runnable {
+    private static class ViewAdapter implements Runnable {
         private final Activity activity;
-        private final String ssid;
+        private final String text;
         private ManaUpdateAdapter manaAdapter;
 
-        public SSIDAdapterUIThread(Activity activity, String ssid, ManaUpdateAdapter manaAdapter) {
+        public ViewAdapter(Activity activity, String text, ManaUpdateAdapter manaAdapter) {
             this.activity = activity;
 
-            this.ssid = ssid;
+            this.text = text;
             this.manaAdapter = manaAdapter;
         }
 
@@ -221,30 +256,7 @@ public class SSHFragment extends KaliBaseFragment {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public synchronized void run() {
-                    manaAdapter.onTextUpdated(ssid);
-                }
-            });
-        }
-    }
-
-    private static class SetTextUIThread implements Runnable {
-        private final Activity activity;
-        private final String text;
-        private TextView textView;
-
-        SetTextUIThread(Activity activity, String text, TextView textView) {
-            this.activity = activity;
-
-            this.text = text;
-            this.textView = textView;
-        }
-
-        @Override
-        public void run() {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public synchronized void run() {
-                    textView.setText(text);
+                    manaAdapter.onTextUpdated(text);
                 }
             });
         }
@@ -263,7 +275,7 @@ public class SSHFragment extends KaliBaseFragment {
                 try {
                     final SshClient sshClient = con.connect(new SocketTransport("localhost",
                             22), "root", true);
-                    SSHFragment.this.sshClient = sshClient;
+                    PlayManaFragment.this.sshClient = sshClient;
 
                     PasswordAuthentication pwd = new PasswordAuthentication();
                     pwd.setPassword("toor");
@@ -312,18 +324,12 @@ public class SSHFragment extends KaliBaseFragment {
         th.start();
     }
 
-    private void showStatus(final String status, final boolean isError) {
+    private void showStatus(final String status) {
 //        todo: save animationStatus for restore on view change
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                int color;
-                if (isError) {
-                    color = Color.RED;
-                } else {
-                    color = textColorSecondary;
-                }
-                queuedTextViewWrapper.setText(status, color);
+                queuedTextViewWrapper.setText(status, null);
             }
         });
 

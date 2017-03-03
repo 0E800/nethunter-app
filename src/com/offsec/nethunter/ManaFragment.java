@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 
 public class ManaFragment extends KaliBaseFragment {
 
-    public static final int REQUEST_ID = 492;
     private ViewPager mViewPager;
 
     private Integer selectedScriptIndex = 0;
@@ -46,10 +45,6 @@ public class ManaFragment extends KaliBaseFragment {
     private static final String TAG = "ManaFragment";
     private static NhPaths nh;
     private String configFilePath;
-    private boolean sshReady = false;
-    private UUID connectionId;
-    private int sessionID = -1;
-    private String sessionKey = null;
 
     public static ManaFragment newInstance(int sectionNumber) {
         ManaFragment fragment = new ManaFragment();

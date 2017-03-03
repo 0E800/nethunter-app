@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class QueuedTextViewWrapper {
     private TextView textView;
-    private static int DISPLAY_TIME = 2000;
+    private static int DISPLAY_TIME = 6000;
     private LinkedList<String> queuedText = new LinkedList<>();
     private LinkedList<Integer> queuedColor = new LinkedList<>();
 
