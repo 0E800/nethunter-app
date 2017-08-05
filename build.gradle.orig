@@ -1,0 +1,157 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+<<<<<<< HEAD
+        classpath 'com.android.tools.build:gradle:2.4.0-alpha1'
+=======
+        classpath 'com.android.tools.build:gradle:2.3.3'
+>>>>>>> forked-experimental
+    }
+}
+
+task wrapper(type: Wrapper) {
+<<<<<<< HEAD
+    gradleVersion = '3.4.1' //version required
+=======
+    gradleVersion = '3.2.1' //version required
+>>>>>>> forked-experimental
+}
+
+apply plugin: 'com.android.application'
+
+<<<<<<< HEAD
+repositories {
+    mavenCentral()
+=======
+def getDate() {
+    return Calendar.getInstance().getTimeInMillis()
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+>>>>>>> forked-experimental
+}
+
+dependencies {
+<<<<<<< HEAD
+    compile 'com.android.support:support-v4:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:design:25.3.0'
+    compile 'com.google.guava:guava:20.0'
+=======
+>>>>>>> forked-experimental
+    compile project(':androidwversionmanager')
+    compile 'com.android.support:support-v4:26.0.0'
+    compile 'com.android.support:appcompat-v7:26.0.0'
+    compile 'com.android.support:design:26.0.0'
+    compile 'com.google.guava:guava:20.0'
+    compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
+<<<<<<< HEAD
+    compile 'com.google.android.gms:play-services-location:10.2.0'
+=======
+    compile 'com.google.android.gms:play-services-location:11.0.4'
+>>>>>>> forked-experimental
+    compile 'joda-time:joda-time:2.9.7'
+    compile 'com.android.support:preference-v14:26.0.0'
+    compile 'com.sshtools:j2ssh-maverick:1.5.5'
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
+
+<<<<<<< HEAD
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
+
+=======
+    dataBinding {
+        enabled = true
+    }
+>>>>>>> forked-experimental
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    defaultConfig {
+        minSdkVersion 17
+<<<<<<< HEAD
+        targetSdkVersion 25
+        versionCode 22
+        versionName "3.16"
+=======
+        targetSdkVersion 26
+        versionCode 20
+        versionName "3.15.3"
+        vectorDrawables.useSupportLibrary=true
+>>>>>>> forked-experimental
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+    }
+
+    signingConfigs {
+
+        debug {
+            storeFile file("${System.properties['user.home']}" + "/.android/debug.keystore")
+        }
+
+        /* note:  To build a signed version of nethunter:
+        1. Put your keystore in ~/.android/release-keystore and set up a key "nethunter"
+        2. set KEYSTORE_PASSWORD and KEY_PASSWORD environment variables before running gradle.  this
+           can be done easily by adding them to .bashrc
+        (or change the below values, hard-coding or whatever...)
+        3. Don't forget to create a proguard.cfg file.  You can find a sample one in the sdk or
+           point to it directly.
+
+        release {
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            storeFile file("${System.properties['user.home']}" +  "/.android/release.keystore")
+            keyAlias "nethunter"
+            keyPassword System.getenv("KEY_PASSWORD")
+
+        }
+        */
+    }
+
+    buildTypes {
+
+        debug {
+            minifyEnabled false
+            buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + System.currentTimeMillis() + "L)"
+            buildConfigField "String", "BUILD_NAME", "\"" + System.getenv("USER") + "\""
+
+            return true
+        }
+        release {
+            //signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            debuggable false
+            jniDebuggable false
+            zipAlignEnabled true
+            buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + System.currentTimeMillis() + "L)"
+            buildConfigField "String", "BUILD_NAME", "\"" + System.getenv("USER") + "\""
+
+            return true
+        }
+    }
+}

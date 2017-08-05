@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.offsec.nethunter.gps.KaliGPSUpdates;
 import com.offsec.nethunter.gps.LocationUpdateService;
+import com.offsec.nethunter.ssh.PlayManaFragment;
 import com.offsec.nethunter.utils.CheckForRoot;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
@@ -41,7 +42,8 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Stack;
 
-public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpdates.Provider {
+public class AppNavHomeActivity extends AppCompatActivity implements
+        KaliGPSUpdates.Provider, FragmentSwitcher {
 
     public final static String TAG = "AppNavHomeActivity";
     private static final String CHROOT_INSTALLED_TAG = "CHROOT_INSTALLED_TAG";
@@ -65,6 +67,13 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
 
     public static Context getAppContext() {
         return c;
+    }
+
+    private ActivityResultListener activityResultListener = null;
+
+
+    public interface ActivityResultListener {
+        void onActivityResult(int requestCode, int resultCode, Intent data);
     }
 
     @Override
@@ -242,150 +251,163 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
                         mDrawerLayout.closeDrawers();
                         mTitle = menuItem.getTitle();
                         titles.push(mTitle.toString());
-
-                        FragmentManager fragmentManager = getSupportFragmentManager();
                         int itemId = menuItem.getItemId();
-                        switch (itemId) {
-                            case R.id.nethunter_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, NetHunterFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            /*
-                            case R.id.kalilauncher_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, KaliLauncherFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            */
-                            case R.id.deauth_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, DeAuthFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.kaliservices_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, KaliServicesFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
 
-                            case R.id.custom_commands_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, CustomCommandsFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-
-                            case R.id.hid_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, HidFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.duckhunter_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, DuckHunterFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.badusb_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, BadusbFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.mana_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, ManaFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.macchanger_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, MacchangerFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.createchroot_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, ChrootManagerFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.mpc_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, MPCFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.mitmf_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, MITMfFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.vnc_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, VNCFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.searchsploit_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, SearchSploitFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.nmap_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, NmapFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-                            case R.id.pineapple_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, PineappleFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-
-                            case R.id.gps_item:
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.container, KaliGpsServiceFragment.newInstance(itemId))
-                                        .addToBackStack(null)
-                                        .commit();
-                                break;
-
-                            case R.id.checkforupdate_item:
-                                checkUpdate();
-                                break;
-                        }
+                        switchFragment(itemId);
                         restoreActionBar();
                         return true;
                     }
                 });
+    }
+
+    private void switchFragment(int itemId) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        switch (itemId) {
+            case R.id.nethunter_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, NetHunterFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            /*
+            case R.id.kalilauncher_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, KaliLauncherFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            */
+            case R.id.run_mana:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, PlayManaFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.kaliservices_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, KaliServicesFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+
+            case R.id.custom_commands_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, CustomCommandsFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+
+            case R.id.hid_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, HidFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.duckhunter_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, DuckHunterFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.badusb_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, BadusbFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.mana_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, ManaFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.macchanger_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, MacchangerFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.createchroot_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, ChrootManagerFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.mpc_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, MPCFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.mitmf_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, MITMfFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.vnc_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, VNCFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.searchsploit_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, SearchSploitFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.nmap_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, NmapFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.pineapple_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, PineappleFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+
+            case R.id.gps_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, KaliGpsServiceFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+
+            case R.id.settings_item:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, KaliPreferenceFragment.newInstance(itemId))
+                        .addToBackStack(null)
+                        .commit();
+                break;
+
+            case R.id.checkforupdate_item:
+                checkUpdate();
+                break;
+
+        }
     }
 
     private void restoreActionBar() {
@@ -524,7 +546,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
             Integer permsNum = 8;
             if (permsCurrent < permsNum) {
                 Log.d("AppNav", "Ask permission");
-                permsCurrent = permsCurrent + 1;
+                permsCurrent++;
                 askMarshmallowPerms(permsCurrent);
             } else {
                 Log.d("AppNav", "Permissions granted");
@@ -537,6 +559,14 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (activityResultListener != null) {
+            activityResultListener.onActivityResult(requestCode, resultCode, data);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onLocationUpdatesRequested(KaliGPSUpdates.Receiver receiver) {
         locationUpdatesRequested = true;
         this.locationUpdateReceiver = receiver;
@@ -545,7 +575,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
     }
 
     private LocationUpdateService locationService;
-    private boolean updateServiceBound = false;
     private ServiceConnection locationServiceConnection = new ServiceConnection() {
 
         @Override
@@ -554,7 +583,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
             // We've bound to Update Service, cast the IBinder and get LocalService instance
             LocationUpdateService.ServiceBinder binder = (LocationUpdateService.ServiceBinder) service;
             locationService = binder.getService();
-            updateServiceBound = true;
             if (locationUpdatesRequested) {
                 locationService.requestUpdates(locationUpdateReceiver);
             }
@@ -563,7 +591,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            updateServiceBound = false;
+
         }
     };
 
@@ -572,6 +600,18 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
     public void onStopRequested() {
         if (locationService != null) {
             locationService.stopUpdates();
+        }
+    }
+
+    @Override
+    public void onAddRemoveFragmentRequested(int prefKeyId) {
+        titles.push("Add/Remove Entries");
+        switch (prefKeyId) {
+            case R.string.prefkey_mana_ap_ifc:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, AddRemoveListPreference.newInstance(prefKeyId))
+                        .addToBackStack(null)
+                        .commit();
         }
     }
 }

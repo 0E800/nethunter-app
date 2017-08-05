@@ -2,15 +2,18 @@ package com.offsec.nethunter;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -127,27 +130,15 @@ public class NetHunterFragment extends Fragment {
 
 
         // 1 thread, 2 commands
-        final TextView netIfaces = (TextView) rootView.findViewById(R.id.editTextNET); // NET IFACES
-        final ListView netList = (ListView) rootView.findViewById(R.id.listViewNet);
+        final LinearLayout ifaceParent = (LinearLayout) rootView.findViewById(R.id.iface_parent);
 
-        final TextView hidIfaces = (TextView) rootView.findViewById(R.id.editTextHID); // HID IFACES
-        final ListView hidList = (ListView) rootView.findViewById(R.id.listViewHid);
 
         final TextView busyboxIfaces = (TextView) rootView.findViewById(R.id.editTextBUSYBOX); // BUSYBOX IFACES
-        final ListView busyboxList = (ListView) rootView.findViewById(R.id.listViewBusybox);
 
         final TextView kernelverIfaces = (TextView) rootView.findViewById(R.id.editTextKERNELVER); // BUSYBOX IFACES
-        final ListView kernelverList = (ListView) rootView.findViewById(R.id.listViewKERNELVER);
 
         final TextView terminalIfaces = (TextView) rootView.findViewById(R.id.editTextNHTerminal); // BUSYBOX IFACES
-        final ListView terminalList = (ListView) rootView.findViewById(R.id.listViewNHTerminal);
 
-        // Dont move this inside the thread. (Will throw a null pointer.)
-        netIfaces.setText("Detecting Network interfaces...");
-        hidIfaces.setText("Detecting HID interfaces...");
-        busyboxIfaces.setText("Detecting Busybox version...");
-        kernelverIfaces.setText("Detecting Kernel version...");
-        terminalIfaces.setText("Detecting Nethunter terminal...");
 
         new Thread(new Runnable() {
             public void run() {
