@@ -3,12 +3,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.4.0-alpha1'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4.1' //version required
+    gradleVersion = '4.0.2' //version required
 }
 
 apply plugin: 'com.android.application'
