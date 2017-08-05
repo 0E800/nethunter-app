@@ -1,2 +1,1 @@
-include ':androidwversionmanager', ':nethunter-wear', 'juicessh', 'nethunter-app'
-project('nethunter-app').projectDir = new File('build.gradle')
+include ':androidwversionmanager', ':nethunter-wear'
