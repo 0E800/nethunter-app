@@ -128,17 +128,11 @@ public class NetHunterFragment extends Fragment {
 
         final boolean installed = appInstalledOrNot("com.offsec.nhterm");
 
-
         // 1 thread, 2 commands
         final LinearLayout ifaceParent = (LinearLayout) rootView.findViewById(R.id.iface_parent);
-
-
         final TextView busyboxIfaces = (TextView) rootView.findViewById(R.id.editTextBUSYBOX); // BUSYBOX IFACES
-
         final TextView kernelverIfaces = (TextView) rootView.findViewById(R.id.editTextKERNELVER); // BUSYBOX IFACES
-
         final TextView terminalIfaces = (TextView) rootView.findViewById(R.id.editTextNHTerminal); // BUSYBOX IFACES
-
 
         new Thread(new Runnable() {
             public void run() {
@@ -161,110 +155,112 @@ public class NetHunterFragment extends Fragment {
                 final String[] busyboxArray = outputBUSYBOX.split("\n");
                 final String[] kernelverArray = outputKERNELVER.split("\n");
 
-                netIfaces.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (outputNET.equals("")) {
-                            netIfaces.setVisibility(View.VISIBLE);
-                            netList.setVisibility(View.GONE);
-                            netIfaces.setText("No network interfaces detected");
-                            netIfaces.setFocusable(false);
-                        } else {
-                            netIfaces.setVisibility(View.GONE);
-                            netList.setVisibility(View.VISIBLE);
-                            ArrayAdapter<String> aaNET = new ArrayAdapter<>(getContext(), R.layout.nethunter_item, netArray);
-                            netList.setAdapter(aaNET);
-                            fixListHeight(netList, aaNET);
-                            netList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                                @Override
-                                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Log.d("CLICKED", netList.getItemAtPosition(position).toString());
-                                    String itemData = netList.getItemAtPosition(position).toString();
-                                    String _itemData = itemData.split("\\s+")[2];
-                                    doCopy(_itemData);
-                                    return false;
-                                }
-                            });
-                        }
-                        if (outputHID.equals("")) {
-                            hidIfaces.setVisibility(View.VISIBLE);
-                            hidList.setVisibility(View.GONE);
-                            hidIfaces.setText("No HID interfaces detected");
-                            hidIfaces.setFocusable(false);
-                        } else {
-                            hidIfaces.setVisibility(View.GONE);
-                            hidList.setVisibility(View.VISIBLE);
-                            ArrayAdapter<String> aaHID = new ArrayAdapter<>(getContext(), R.layout.nethunter_item, hidArray);
-                            hidList.setAdapter(aaHID);
-                            fixListHeight(hidList, aaHID);
-                            hidList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                                @Override
-                                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Log.d("CLCIKED", hidList.getItemAtPosition(position).toString());
-                                    String itemData = hidList.getItemAtPosition(position).toString();
-                                    doCopy(itemData);
-                                    return false;
-                                }
-                            });
-                        }
-                        if (outputBUSYBOX.equals("")) {
-                            busyboxIfaces.setVisibility(View.VISIBLE);
-                            busyboxList.setVisibility(View.GONE);
-                            busyboxIfaces.setText("Busybox not detected!");
-                            busyboxIfaces.setFocusable(false);
-                        } else {
-                            busyboxIfaces.setVisibility(View.GONE);
-                            busyboxList.setVisibility(View.VISIBLE);
-                            ArrayAdapter<String> aaBUSYBOX = new ArrayAdapter<>(getContext(), R.layout.nethunter_item, busyboxArray);
-                            busyboxList.setAdapter(aaBUSYBOX);
-                            fixListHeight(busyboxList, aaBUSYBOX);
-                            busyboxList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                                @Override
-                                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Log.d("CLICKED", busyboxList.getItemAtPosition(position).toString());
-                                    String itemData = busyboxList.getItemAtPosition(position).toString();
-                                    doCopy(itemData);
-                                    return false;
-                                }
-                            });
-                        }
-                        if (!installed) {
-                            // Installed, make note!
-                            terminalIfaces.setVisibility(View.VISIBLE);
-                            terminalList.setVisibility(View.GONE);
-                            terminalIfaces.setText("Nethunter Terminal is NOT installed!");
-                            terminalIfaces.setFocusable(false);
-                        } else {
-                            // Not installed, make note!
-                            terminalIfaces.setVisibility(View.VISIBLE);
-                            terminalList.setVisibility(View.GONE);
-                            terminalIfaces.setText("Nethunter Terminal is installed");
-                            terminalIfaces.setFocusable(false);
-                        }
+                    ifaceParent.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ifaceParent.findViewById(R.id.nethunter_loading_layout).setVisibility(View.GONE);
+                            ifaceParent.findViewById(R.id.nethunter_current_interfaces).setVisibility(View.VISIBLE);
 
-                        if (outputKERNELVER.equals("")) {
-                            kernelverIfaces.setVisibility(View.VISIBLE);
-                            kernelverList.setVisibility(View.GONE);
-                            kernelverIfaces.setText("Could not find kernel version!");
-                            kernelverIfaces.setFocusable(false);
-                        } else {
-                            kernelverIfaces.setVisibility(View.GONE);
-                            kernelverList.setVisibility(View.VISIBLE);
-                            ArrayAdapter<String> aaKERNELVER = new ArrayAdapter<>(getContext(), R.layout.nethunter_item, kernelverArray);
-                            kernelverList.setAdapter(aaKERNELVER);
-                            kernelverList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                                @Override
-                                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Log.d("CLICKED", kernelverList.getItemAtPosition(position).toString());
-                                    String itemData = kernelverList.getItemAtPosition(position).toString();
-                                    doCopy(itemData);
-                                    return false;
+                            int ind = 3;
+                            if (outputNET.equals("")) {
+                                TextView textView = new TextView(new ContextThemeWrapper(
+                                        ifaceParent.getContext(),
+                                        R.style.Nethunter_NetworkInterfaceText));
+                                textView.setFocusable(false);
+                                textView.setText("No network interfaces detected");
+                                ifaceParent.addView(textView,ind);
+                                ind++;
+
+                            } else {
+                                for (final String netEntry :
+                                        netArray) {
+                                    TextView textView = new TextView(new ContextThemeWrapper(
+                                            ifaceParent.getContext(),
+                                            R.style.Nethunter_NetworkInterfaceText));
+                                    textView.setText(netEntry);
+                                    textView.setOnLongClickListener(new View.OnLongClickListener() {
+                                        @Override
+                                        public boolean onLongClick(View v) {
+                                            Log.d("CLICKED", netEntry);
+                                            String itemData = netEntry.split("\\s+")[2];
+                                            doCopy(itemData);
+                                            return true;
+                                        }
+                                    });
+                                    ifaceParent.addView(textView, ind);
+                                    ind++;
+
                                 }
-                            });
+                            }
+                            ind++;
+                            ifaceParent.findViewById(R.id.nethunter_hid_title).setVisibility(View.VISIBLE);
+
+                            if (outputHID.equals("")) {
+                                TextView textView = new TextView(new ContextThemeWrapper(
+                                        ifaceParent.getContext(),
+                                        R.style.Nethunter_NetworkInterfaceText));
+                                textView.setFocusable(false);
+                                textView.setText("No HID interfaces detected");
+                                ifaceParent.addView(textView,ind);
+                                ind++;
+
+                            } else {
+                                for (final String netEntry :
+                                        hidArray) {
+                                    TextView textView = new TextView(new ContextThemeWrapper(
+                                            ifaceParent.getContext(),
+                                            R.style.Nethunter_NetworkInterfaceText));
+                                    textView.setText(netEntry);
+                                    textView.setOnLongClickListener(new View.OnLongClickListener() {
+                                        @Override
+                                        public boolean onLongClick(View v) {
+                                            Log.d("CLICKED", netEntry);
+                                            String itemData = netEntry;
+                                            doCopy(itemData);
+                                            return true;
+                                        }
+                                    });
+                                    ifaceParent.addView(textView, ind);
+                                    ind++;
+                                }
+                            }
+
+                            ifaceParent.findViewById(R.id.nethunter_busybox_title).setVisibility(View.VISIBLE);
+                            busyboxIfaces.setVisibility(View.VISIBLE);
+                            if (outputBUSYBOX.equals("")) {
+                                busyboxIfaces.setText("Busnethunter_ext_ip_titleybox not detected!");
+                                busyboxIfaces.setFocusable(false);
+                            } else {
+                                busyboxIfaces.setText(outputBUSYBOX);
+                            }
+
+                            ifaceParent.findViewById(R.id.nethunter_kernel_version).setVisibility(View.VISIBLE);
+                            kernelverIfaces.setVisibility(View.VISIBLE);
+                            if (outputKERNELVER.equals("")) {
+                                kernelverIfaces.setText("Could not find kernel version!");
+                                kernelverIfaces.setFocusable(false);
+                            } else {
+                                kernelverIfaces.setVisibility(View.GONE);
+                                kernelverIfaces.setText(outputKERNELVER);
+                            }
+
+                            ifaceParent.findViewById(R.id.nethunter_kernel_version).setVisibility(View.VISIBLE);
+                            terminalIfaces.setVisibility(View.VISIBLE);
+                            if(!installed) {
+                                // Installed, make note!
+                                terminalIfaces.setText("Nethunter Terminal is NOT installed!");
+                                terminalIfaces.setFocusable(false);
+                            } else {
+                                // Not installed, make note!
+                                terminalIfaces.setText("Nethunter Terminal is installed");
+                            }
+
+                            ifaceParent.findViewById(R.id.nethunter_ext_ip_title).setVisibility(View.VISIBLE);
+                            ifaceParent.findViewById(R.id.nethunter_ext_ip_layout).setVisibility(View.VISIBLE);
+
                         }
-                    }
-                });
-            }
+                    });
+                }
         }).start();
     }
 
@@ -278,19 +274,6 @@ public class NetHunterFragment extends Fragment {
             app_installed = false;
         }
         return app_installed;
-    }
-
-    private void fixListHeight(ListView theListView, ArrayAdapter theAdapter) {
-        int totalHeight = 0;
-        for (int i = 0; i < theAdapter.getCount(); i++) {
-            View listItem = theAdapter.getView(i, null, theListView);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = theListView.getLayoutParams();
-        params.height = totalHeight + (theListView.getDividerHeight() * (theAdapter.getCount() - 1));
-        theListView.setLayoutParams(params);
-        theListView.requestLayout();
     }
 
     // Now we can copy and address from networks!!!!!! Surprise! ;)

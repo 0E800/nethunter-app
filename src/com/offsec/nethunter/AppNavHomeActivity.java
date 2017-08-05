@@ -104,7 +104,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         LinearLayout navigationHeadView = (LinearLayout) inflater.inflate(R.layout.sidenav_header, null);
         navigationView.addHeaderView(navigationHeadView);
 
-        FloatingActionButton readmeButton = (FloatingActionButton) navigationHeadView.findViewById(R.id.info_fab);
+        FloatingActionButton readmeButton = navigationHeadView.findViewById(R.id.info_fab);
         readmeButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -121,8 +121,8 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         prefs = getSharedPreferences("com.offsec.nethunter", Context.MODE_PRIVATE);
 
         final String buildTime = sdf.format(BuildConfig.BUILD_TIME);
-        TextView buildInfo1 = (TextView) navigationHeadView.findViewById(R.id.buildinfo1);
-        TextView buildInfo2 = (TextView) navigationHeadView.findViewById(R.id.buildinfo2);
+        TextView buildInfo1 = navigationHeadView.findViewById(R.id.buildinfo1);
+        TextView buildInfo2 = navigationHeadView.findViewById(R.id.buildinfo2);
         buildInfo1.setText(String.format("Version: %s (%s)", BuildConfig.VERSION_NAME, Build.TAGS));
         String buildUser = "Kali";
         buildInfo2.setText(String.format("Built by %s at %s", buildUser, buildTime));
@@ -136,9 +136,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.darkTitle));
         }
 
-
-//        new ShellExecuter().RunAsRootOutput("/system/bin/bootkali");
-        // now pop in the default fragment
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -270,15 +267,15 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                         .addToBackStack(null)
                         .commit();
                 break;
-            /*
-            case R.id.kalilauncher_item:
+
+            case R.id.deauth_item:
                 fragmentManager
                         .beginTransaction()
-                        .replace(R.id.container, KaliLauncherFragment.newInstance(itemId))
+                        .replace(R.id.container, DeAuthFragment.newInstance(itemId))
                         .addToBackStack(null)
                         .commit();
                 break;
-            */
+
             case R.id.run_mana:
                 fragmentManager
                         .beginTransaction()
