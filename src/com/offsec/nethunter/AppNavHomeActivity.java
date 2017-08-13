@@ -2,6 +2,8 @@ package com.offsec.nethunter;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,10 +11,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -32,6 +36,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.CapabilityApi;
+import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 import com.offsec.nethunter.gps.KaliGPSUpdates;
 import com.offsec.nethunter.gps.LocationUpdateService;
 import com.offsec.nethunter.ssh.PlayManaFragment;
@@ -39,15 +52,21 @@ import com.offsec.nethunter.utils.CheckForRoot;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.Stack;
 
 public class AppNavHomeActivity extends AppCompatActivity implements
-        KaliGPSUpdates.Provider, FragmentSwitcher {
+        KaliGPSUpdates.Provider, FragmentSwitcher,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        CapabilityApi.CapabilityListener {
 
     public final static String TAG = "AppNavHomeActivity";
     private static final String CHROOT_INSTALLED_TAG = "CHROOT_INSTALLED_TAG";
     private static final String GPS_BACKGROUND_FRAGMENT_TAG = "BG_FRAGMENT_TAG";
+    private static final String CAPABILITY_WEAR_APP = "verify_remote_nethunter_wear_app";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -64,12 +83,16 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     private Integer permsCurrent = 1;
     private boolean locationUpdatesRequested = false;
     private KaliGPSUpdates.Receiver locationUpdateReceiver;
+    private GoogleApiClient mGoogleApiClient = null;
+    private Set<Node> mWearNodesWithApp;
+    private List<Node> mAllConnectedNodes;
 
     public static Context getAppContext() {
         return c;
     }
 
     private ActivityResultListener activityResultListener = null;
+
 
 
     public interface ActivityResultListener {
@@ -172,6 +195,38 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         // pre-set the drawer options
         setDrawerOptions();
 
+        // Initialize google api client for wearable extension
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause()");
+        super.onPause();
+
+        if ((mGoogleApiClient != null) && mGoogleApiClient.isConnected()) {
+
+            Wearable.CapabilityApi.removeCapabilityListener(
+                    mGoogleApiClient,
+                    this,
+                    CAPABILITY_WEAR_APP);
+
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume()");
+        super.onResume();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
     }
 
     public static void setDrawerOptions() {
@@ -610,6 +665,125 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                         .addToBackStack(null)
                         .commit();
         }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected()");
+
+        // Set up listeners for capability changes (install/uninstall of remote app).
+        Wearable.CapabilityApi.addCapabilityListener(
+                mGoogleApiClient,
+                this,
+                CAPABILITY_WEAR_APP);
+
+        // Initial request for devices with our capability, aka, our Wear app installed.
+        findWearDevicesWithApp();
+
+        // Initial request for all Wear devices connected (with or without our capability).
+        // Additional Note: Because there isn't a listener for ALL Nodes added/removed from network
+        // that isn't deprecated, we simply update the full list when the Google API Client is
+        // connected and when capability changes come through in the onCapabilityChanged() method.
+        findAllWearDevices();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "onConnectionSuspended(): connection to google api client suspended: " + i);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e(TAG, "onConnectionFailed(): " + connectionResult);
+    }
+
+    @Override
+    public void onCapabilityChanged(CapabilityInfo capabilityInfo) {
+        Log.d(TAG, "onCapabilityChanged(): " + capabilityInfo);
+
+        mWearNodesWithApp = capabilityInfo.getNodes();
+
+        // Because we have an updated list of devices with/without our app, we need to also update
+        // our list of active Wear devices.
+        findAllWearDevices();
+
+        verifyNode();
+    }
+
+
+    private void findWearDevicesWithApp() {
+        Log.d(TAG, "findWearDevicesWithApp()");
+
+        // You can filter this by FILTER_REACHABLE if you only want to open Nodes (Wear Devices)
+        // directly connect to your phone.
+        PendingResult<CapabilityApi.GetCapabilityResult> pendingResult =
+                Wearable.CapabilityApi.getCapability(
+                        mGoogleApiClient,
+                        CAPABILITY_WEAR_APP,
+                        CapabilityApi.FILTER_REACHABLE);
+
+        pendingResult.setResultCallback(new ResultCallback<CapabilityApi.GetCapabilityResult>() {
+            @Override
+            public void onResult(@NonNull CapabilityApi.GetCapabilityResult getCapabilityResult) {
+                Log.d(TAG, "onResult(): " + getCapabilityResult);
+
+                if (getCapabilityResult.getStatus().isSuccess()) {
+                    CapabilityInfo capabilityInfo = getCapabilityResult.getCapability();
+                    mWearNodesWithApp = capabilityInfo.getNodes();
+                    verifyNode();
+
+                } else {
+                    Log.d(TAG, "Failed CapabilityApi: " + getCapabilityResult.getStatus());
+                }
+            }
+        });
+    }
+
+    private void verifyNode() {
+        Log.d(TAG, "verifyNode()");
+
+        if ((mWearNodesWithApp == null) || (mAllConnectedNodes == null)) {
+            Log.d(TAG, "Waiting on Results for both connected nodes and nodes with app");
+
+        } else if (mAllConnectedNodes.isEmpty()) {
+            Log.d(TAG, "No wear devices connected");
+
+        } else if (mWearNodesWithApp.isEmpty()) {
+            Log.d(TAG, "No connected devices with app");
+
+        } else if (mWearNodesWithApp.size() < mAllConnectedNodes.size()) {
+            // TODO: Add your code to communicate with the wear app(s) via
+            // Wear APIs (MessageApi, DataApi, etc.)
+
+            Log.d(TAG, "Installed some devices: " + mWearNodesWithApp.toString());
+
+        } else {
+            // TODO: Add your code to communicate with the wear app(s) via
+            // Wear APIs (MessageApi, DataApi, etc.)
+            Log.d(TAG, "Installed all devices: " + mWearNodesWithApp);
+
+        }
+    }
+
+    private void findAllWearDevices() {
+        Log.d(TAG, "findAllWearDevices()");
+
+        PendingResult<NodeApi.GetConnectedNodesResult> pendingResult =
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
+
+        pendingResult.setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(@NonNull NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+
+                if (getConnectedNodesResult.getStatus().isSuccess()) {
+                    mAllConnectedNodes = getConnectedNodesResult.getNodes();
+                    verifyNode();
+
+                } else {
+                    Log.d(TAG, "Failed CapabilityApi: " + getConnectedNodesResult.getStatus());
+                }
+            }
+        });
     }
 }
 

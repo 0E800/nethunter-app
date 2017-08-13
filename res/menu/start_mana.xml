@@ -6,9 +6,8 @@
         android:id="@+id/menu_stop_mana"
         app:showAsAction="always"
         android:icon="@drawable/ic_stop_white_24dp" />
-    <item android:title="Item"
+    <item android:title="Start"
         app:showAsAction="always"
-        android:enabled="false"
         android:icon="@drawable/ic_action_play"
         android:id="@+id/menu_start_mana" />
 </menu>

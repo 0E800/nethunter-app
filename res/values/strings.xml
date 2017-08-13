@@ -384,6 +384,8 @@
     <string name="prefkey_mana_ap_ifc">keyManaApIfc</string>
     <string name="prefkey_mana_ssid">keyManaSSID</string>
     <string name="add">Add</string>
+    <string name="normal_channel_name">Nethunter Normal Notifications</string>
+    <string name="normal_channel_description">The default notification channel for Nethunter</string>
     <!-- End GPSFragment -->
 
 

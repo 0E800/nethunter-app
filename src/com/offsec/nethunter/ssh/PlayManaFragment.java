@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.offsec.nethunter.AnimatedStatusView;
 import com.offsec.nethunter.KaliBaseFragment;
 import com.offsec.nethunter.PlayManaBinding;
 import com.offsec.nethunter.PlayManaViewModel;
@@ -51,10 +52,9 @@ public class PlayManaFragment extends KaliBaseFragment {
     private SshSession session = null;
     private boolean shellCancelled = false;
     private boolean shellStarted = false;
-    private int textColorSecondary;
-    private QueuedTextViewWrapper queuedTextViewWrapper;
     private final PlayManaViewModel viewModel = new PlayManaViewModel();
     private PlayManaBinding binding;
+    private AnimatedStatusView animatedStatusView;
 
 
     public static PlayManaFragment newInstance(int itemId) {
@@ -68,21 +68,20 @@ public class PlayManaFragment extends KaliBaseFragment {
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(android.R.attr.textColorSecondary, typedValue, true);
-        textColorSecondary = typedValue.data;
         super.onAttach(context);
     }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_start_mana) {
-            executeCommand("start-mana-full-lollipop");
+            executeInitialCommand("start-mana-full-lollipop");
             return true;
         } else if (item.getItemId() == R.id.menu_stop_mana) {
 
@@ -103,8 +102,8 @@ public class PlayManaFragment extends KaliBaseFragment {
             @Override
             public void onClick(View v) {
                 fileWriter = new FileWriter();
-                executeCommand("start-mana-full-lollipop");
-                showStatus("Mana started");
+                executeInitialCommand("start-mana-full-lollipop");
+                viewModel.setInitialized(true);
 //                replayFromFile();
             }
         });
@@ -112,14 +111,13 @@ public class PlayManaFragment extends KaliBaseFragment {
             @Override
             public void onClick(View v) {
                 try {
-                    session.getOutputStream().write("\r\n".getBytes());
+                    executeAdditionalCommand("\r\n".getBytes());
                     shellCancelled = true;
                     shellStarted = false;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             ssidAdapter.resetAll();
-                            showStatus("");
                         }
                     });
                     viewModel.resetClients();
@@ -130,9 +128,21 @@ public class PlayManaFragment extends KaliBaseFragment {
 
             }
         });
-        queuedTextViewWrapper = new QueuedTextViewWrapper(binding.sshStatus);
-
         return binding.getRoot();
+    }
+
+    private void executeAdditionalCommand(final byte[] bytes) throws IOException {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    session.getOutputStream().write(bytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
     }
 
     private void replayFromFile() {
@@ -167,8 +177,8 @@ public class PlayManaFragment extends KaliBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final LinearLayout ssidLayout = (LinearLayout) view.findViewById(R.id.mana_layout_left);
-        final LinearLayout llCert = (LinearLayout) view.findViewById(R.id.ll_cert);
+        final LinearLayout ssidLayout = view.findViewById(R.id.mana_layout_left);
+        final LinearLayout llCert = view.findViewById(R.id.ll_cert);
         ssidAdapter = new ManaUpdateAdapter(ssidLayout, 3000, 6000);
         certificateAdapter = new ManaUpdateAdapter(llCert, 4000, 7000);
         LayoutTransition lt = new LayoutTransition();
@@ -179,8 +189,8 @@ public class PlayManaFragment extends KaliBaseFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.start_mana, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.start_mana, menu);
     }
 
     public SshClient sshClient;
@@ -211,7 +221,7 @@ public class PlayManaFragment extends KaliBaseFragment {
             viewModel.decrementConnected();
         } else if (received.contains("STA to kernel")) {
 //                couldn't add station to kernel driver
-            showStatus("Max connections for kernel reached");
+            viewModel.setError("Max connections for kernel");
 
         } else if (received.contains("Subject DN:")) {
             String cert = received.split("O=")[1];
@@ -220,14 +230,13 @@ public class PlayManaFragment extends KaliBaseFragment {
             new ViewAdapter(getActivity(), cert, certificateAdapter).run();
 
         } else if (received.contains("could not read interface")) {
-            showStatus("Could not read interface. Stopping processes");
+            viewModel.setError("Could not find wlan1");
             binding.sshStop.callOnClick();
         } else if (received.contains("AP-ENABLED")) {
-            showStatus("Access Point Enabled");
         } else if (received.contains("Hit enter to kill me")) {
-            showStatus("Mana fully started");
+            viewModel.setStarted(true);
         } else if (received.contains("Cannot find device")) {
-            showStatus("**Could not find device...stopping mana**");
+            viewModel.setError("Could not find wlan1");
             binding.getRoot().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -262,7 +271,8 @@ public class PlayManaFragment extends KaliBaseFragment {
         }
     }
 
-    private void executeCommand(final String command) {
+    private void executeInitialCommand(final String command) {
+        viewModel.setJustReset(false);
         try {
             con = SshConnector.createInstance();
         } catch (SshException e) {
@@ -302,7 +312,6 @@ public class PlayManaFragment extends KaliBaseFragment {
                                 BufferedReader br = new BufferedReader(is);
                                 String line;
                                 session.getOutputStream().write((command + "\n").getBytes());
-//                                showStatus("Mana started", false);
 //                            session.getOutputStream().flush();
                                 while ((line = br.readLine()) != null || !shellCancelled) {
                                     processShellOutput(line);
@@ -322,16 +331,6 @@ public class PlayManaFragment extends KaliBaseFragment {
         });
 
         th.start();
-    }
-
-    private void showStatus(final String status) {
-//        todo: save animationStatus for restore on view change
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                queuedTextViewWrapper.setText(status, null);
-            }
-        });
 
 
     }

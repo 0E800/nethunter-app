@@ -4,6 +4,7 @@
 
     <data class=".PlayManaBinding">
 
+        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="com.offsec.nethunter.PlayManaViewModel" />
@@ -102,21 +103,18 @@
         <LinearLayout
             android:id="@+id/ll_cert"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_below="@+id/sites_label"
-            android:orientation="vertical"/>
+            android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/status_slide"
+        </LinearLayout>
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:animateLayoutChanges="true"
-            android:orientation="vertical"
-            android:layout_above="@id/ssh_stop"
-            android:layout_alignParentBottom="true"
-            android:layout_height="112dp">
-
+            android:layout_height="56dp">
             <TextView
-                style="@style/TextAppearance.AppCompat.Medium"
+                android:id="@+id/status_text"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/heading_background"
@@ -124,20 +122,15 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="8dp"
-                android:text="Status" />
-
-            <TextView
-                android:id="@+id/ssh_status"
-                style="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:text="@{viewModel.statusText}"
+                android:layout_gravity="center_vertical"/>
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:visibility="@{viewModel.initialized &amp;&amp; !viewModel.started ? View.VISIBLE : View.INVISIBLE}"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_weight="1"
-                android:text="test" />
-        </LinearLayout>
-
+                android:layout_height="2dp"
+                android:indeterminate="true"
+                android:layout_gravity="top"/>
+        </FrameLayout>
     </RelativeLayout>
 </layout>
