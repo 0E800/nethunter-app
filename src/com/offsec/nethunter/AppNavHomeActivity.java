@@ -538,10 +538,17 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
 
     @Override
     public void onLocationUpdatesRequested(KaliGPSUpdates.Receiver receiver) {
-        locationUpdatesRequested = true;
         this.locationUpdateReceiver = receiver;
-        Intent intent = new Intent(getApplicationContext(), LocationUpdateService.class);
-        bindService(intent, locationServiceConnection, Context.BIND_AUTO_CREATE);
+        locationUpdatesRequested = true;
+        if (updateServiceBound) {
+            locationService.requestUpdates(receiver);
+        } else {
+            Intent intent = new Intent(getApplicationContext(), LocationUpdateService.class);
+            bindService(intent, locationServiceConnection, Context.BIND_AUTO_CREATE);
+        }
+
+
+
     }
 
     private LocationUpdateService locationService;

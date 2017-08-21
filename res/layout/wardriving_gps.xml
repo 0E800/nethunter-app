@@ -23,6 +23,12 @@
         android:text="Stop GPSD in chroot"
         android:id="@+id/gps_stop" />
 
+    <Button
+        android:id="@+id/gps_import"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Import GPS Waypoints" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

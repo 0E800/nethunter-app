@@ -32,9 +32,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import android.app.Fragment;
-//import android.support.v4.app.FragmentActivity;
-
 public class ManaFragment extends Fragment {
 
     private ViewPager mViewPager;

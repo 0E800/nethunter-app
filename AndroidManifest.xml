@@ -76,18 +76,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DeAuthWhitelistActivity" />
         </activity>
-        <updateReceiver android:name=".updateReceiver.BootCompletedReceiver">
+        <receiver android:name=".receiver.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </updateReceiver>
+        </receiver>
 
         <service
             android:name=".service.RunAtBootService"
             android:exported="false"
             android:process=":runAtBoot" />
         <service
-            android:name="gps.LocationUpdateService"
+            android:name=".gps.LocationUpdateService"
             android:enabled="true"
             android:exported="false" />
     </application>

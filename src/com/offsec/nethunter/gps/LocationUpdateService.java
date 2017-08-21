@@ -114,13 +114,14 @@ public class LocationUpdateService extends Service implements GpsdServer.Connect
         double longitude = location.getLongitude();
         char ewSuffix = longitude < 0 ? 'W' : 'E';
         longitude = Math.abs(longitude);
-        @SuppressLint("DefaultLocale")
 
+        @SuppressLint("DefaultLocale")
         String lat = String.format("%02d%02d.%04d,%c",
                 (int) latitude,
                 (int) (latitude * 60) % 60,
                 (int) (latitude * 60 * 10000) % 10000,
                 nsSuffix);
+        @SuppressLint("DefaultLocale")
         String lon = String.format("%03d%02d.%04d,%c",
                 (int) longitude,
                 (int) (longitude * 60) % 60,
@@ -165,6 +166,7 @@ public class LocationUpdateService extends Service implements GpsdServer.Connect
 
 
     public void requestUpdates(KaliGPSUpdates.Receiver receiver) {
+        Log.d(TAG, "in requestUpdates");
         requestedLocationUpdates = true;
         this.updateReceiver = receiver;
 
@@ -225,17 +227,22 @@ public class LocationUpdateService extends Service implements GpsdServer.Connect
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            String nmeaSentence = nmeaSentenceFromLocation(location);
+            final String nmeaSentence = nmeaSentenceFromLocation(location);
 
             if (clientSocket != null) {
 
-                PrintWriter out = null;
+                final PrintWriter out;
                 try {
                     out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            out.println(nmeaSentence);
+                        }
+                    }).start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                out.println(nmeaSentence);
 
 
                 if (updateReceiver != null) {
