@@ -1,1 +1,1 @@
-include ':androidwversionmanager', ':nethunter-wear'
+include ':androidwversionmanager'

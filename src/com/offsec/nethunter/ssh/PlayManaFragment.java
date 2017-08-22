@@ -79,6 +79,7 @@ public class PlayManaFragment extends KaliBaseFragment {
     }
 
     @Override
+
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_start_mana) {
             executeInitialCommand("start-mana-full-lollipop");
