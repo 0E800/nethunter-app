@@ -28,11 +28,11 @@
             android:layout_width="match_parent"
             android:src="@android:drawable/divider_horizontal_bright" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/inject_settings" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/inject_settings"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -56,11 +56,12 @@
             android:text="@string/mitmf_inject_ONCE" />
 
             <TextView
-            android:layout_width="match_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/objects_to_inject"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Subtitle" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@android:color/white" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -113,10 +114,11 @@
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/inject_characteristics"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Subtitle" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@android:color/white" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -136,7 +138,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp">
 
@@ -152,8 +154,8 @@
 
 
             <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp">
 
@@ -167,8 +169,8 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp">
 
