@@ -1,11 +1,16 @@
 package com.offsec.nethunter;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.offsec.nethunter.gps.KaliGPSUpdates;
+import com.offsec.nethunter.gps.WarDrivingDbContract;
+import com.offsec.nethunter.gps.WardrivingDbHelper;
 import com.offsec.nethunter.utils.NhPaths;
 import com.offsec.nethunter.utils.ShellExecuter;
 
@@ -21,9 +28,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,9 +37,9 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 
 
-public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.Receiver {
+public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.Receiver {
 
-    private static final String TAG = "KaliGpsServiceFragment";
+    private static final String TAG = "WarDrivingMainFragment";
 
     private static NhPaths nh;
 
@@ -43,11 +47,11 @@ public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.R
     private KaliGPSUpdates.Provider gpsProvider = null;
     private TextView gpsTextView;
     private final int REQUEST_KISMET_DB = 101;
-    public KaliGpsServiceFragment() {
+    public WarDrivingMainFragment() {
     }
 
-    public static KaliGpsServiceFragment newInstance(int sectionNumber) {
-        KaliGpsServiceFragment fragment = new KaliGpsServiceFragment();
+    public static WarDrivingMainFragment newInstance(int sectionNumber) {
+        WarDrivingMainFragment fragment = new WarDrivingMainFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -65,7 +69,7 @@ public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.R
             public void onClick(View v) {
 
                 if (gpsProvider != null) {
-                    gpsProvider.onLocationUpdatesRequested(KaliGpsServiceFragment.this);
+                    gpsProvider.onLocationUpdatesRequested(WarDrivingMainFragment.this);
                     gpsTextView.append("Starting gps updates \n");
                 }
             }
@@ -103,7 +107,6 @@ public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.R
         intent.setType("*/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Choose Kismet Output"), REQUEST_KISMET_DB);
-
     }
 
 
@@ -119,12 +122,63 @@ public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.R
             } catch (XmlPullParserException | IOException e) {
                 e.printStackTrace();
             }
-//            Todo: allow multi-select of zip files
+//            todo: allow multi-select
         }
     }
 
     private void importIntoDB(List<WirelessNetwork> networks) {
+        DatabaseAccess dbAccess = new DatabaseAccess(getActivity());
+        dbAccess.execute(null, null);
 
+    }
+
+    private static class DatabaseAccess extends  AsyncTask<List<WirelessNetwork>, Void, Void> {
+
+        private final WardrivingDbHelper dbHelper;
+        private final AlertDialog.Builder dialogBuilder;
+
+        public DatabaseAccess(Context context) {
+
+            dbHelper = new WardrivingDbHelper(context);
+            dialogBuilder = new AlertDialog.Builder(context);
+        }
+
+        @SafeVarargs
+        @Override
+        protected final Void doInBackground(List<WirelessNetwork>... networkLists) {
+            List<WirelessNetwork> networks = networkLists[0];
+
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            // Create a new map of values, where column names are the keys
+            for (WirelessNetwork network : networks) {
+                ContentValues values = new ContentValues();
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_BSSID, network.bssid);
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_SSID, network.ssid);
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_LAT, network.lat);
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_LON, network.lon);
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_MIN_LAT, network.minLat);
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_MIN_LON, network.minLon);
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_MAX_LAT, network.maxLat);
+                values.put(WarDrivingDbContract.WifiEntry.COLUMN_NAME_MAX_LON, network.maxLon);
+
+                db.insert(WarDrivingDbContract.WifiEntry.TABLE_NAME, null, values);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            AlertDialog dialog = dialogBuilder.setTitle(R.string.import_complete)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .create();
+            dialog.show();
+        }
     }
 
     private List<WirelessNetwork> parseXMLInput(InputStream is) throws XmlPullParserException, IOException {
@@ -159,6 +213,8 @@ public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.R
             if (event == XmlPullParser.START_TAG) {
                 if (parser.getName().equals("essid")) {
                     network.ssid = parser.nextText();
+                } else if (parser.getName().equals("bssid")) {
+                    network.bssid = parser.nextText();
                 } else if (parser.getName().equals("min-lat")) {
                     network.minLat = Double.parseDouble(parser.nextText());
                 } else if (parser.getName().equals("min-lon")) {
@@ -227,13 +283,14 @@ public class KaliGpsServiceFragment extends Fragment implements KaliGPSUpdates.R
     }
 
     private static class WirelessNetwork {
-        public String ssid;
-        public double lat;
-        public double lon;
-        public double minLat;
-        public double maxLat;
-        public double minLon;
-        public double maxLon;
+        String bssid;
+        String ssid;
+        double lat;
+        double lon;
+        double minLat;
+        double maxLat;
+        double minLon;
+        double maxLon;
     }
 }
 

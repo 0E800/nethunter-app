@@ -373,7 +373,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
                             case R.id.gps_item:
                                 fragmentManager
                                         .beginTransaction()
-                                        .replace(R.id.container, KaliGpsServiceFragment.newInstance(itemId))
+                                        .replace(R.id.container, WardrivingFragment.newInstance(itemId))
                                         .addToBackStack(null)
                                         .commit();
                                 break;

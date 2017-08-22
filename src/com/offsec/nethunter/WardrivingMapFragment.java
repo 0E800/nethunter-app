@@ -44,7 +44,7 @@ public class WardrivingMapFragment extends Fragment implements OnMapReadyCallbac
     public void onAttach(Context context) {
         super.onAttach(context);
         //        Todo: connect to database asynchronously for ssids
-        SQLiteDatabase.openDatabase("/data/", null , SQLiteDatabase.OPEN_READONLY);
+//        SQLiteDatabase.openDatabase("/data/", null , SQLiteDatabase.OPEN_READONLY);
     }
 
     @Override

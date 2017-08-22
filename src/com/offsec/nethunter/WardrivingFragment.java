@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 public class WardrivingFragment extends Fragment {
     private ViewPager mViewPager;
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
 
     @Nullable
@@ -22,12 +23,19 @@ public class WardrivingFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.wardriving, container, false);
         TabsPagerAdapter tabsPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
 
-        mViewPager = (ViewPager) rootView.findViewById(R.id.pagerWardriving);
+        mViewPager = rootView.findViewById(R.id.pagerWardriving);
         mViewPager.setAdapter(tabsPagerAdapter);
 
         setHasOptionsMenu(true);
         return rootView;
     }
+
+    public static WardrivingFragment newInstance(int sectionNumber) {
+        WardrivingFragment fragment = new WardrivingFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;}
 
     public class TabsPagerAdapter extends FragmentPagerAdapter {
 
@@ -50,11 +58,11 @@ public class WardrivingFragment extends Fragment {
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new KaliGpsServiceFragment();
+                    return new WarDrivingMainFragment();
                 case 1:
                     return new WardrivingMapFragment();
                 default:
-                    return new KaliGpsServiceFragment();
+                    return new WarDrivingMainFragment();
             }
         }
 

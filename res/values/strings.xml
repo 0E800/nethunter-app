@@ -379,6 +379,8 @@
     <string name="inject_characteristics">Inject Characteristics</string>
     <string name="shellshock_command">Shellshock command</string>
     <string name="inject_settings">Inject Settings</string>
+    <string name="ok">OK</string>
+    <string name="import_complete">Import Complete</string>
     <!-- End GPSFragment -->
 
 
