@@ -4,7 +4,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+<<<<<<< HEAD
+        classpath 'com.android.tools.build:gradle:2.3.3'
+=======
         classpath 'com.android.tools.build:gradle:3.0.0-beta2'
+>>>>>>> mitmf-fixes
     }
 }
 
@@ -29,7 +33,11 @@ dependencies {
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile 'com.google.android.gms:play-services-location:11.2.0'
     compile 'joda-time:joda-time:2.9.7'
+<<<<<<< HEAD
+    compile 'com.google.android.gms:play-services-maps:11.0.4'
+=======
     implementation 'com.google.guava:guava:23.0-android'
+>>>>>>> mitmf-fixes
 }
 
 android {
