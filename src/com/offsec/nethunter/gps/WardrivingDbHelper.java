@@ -16,14 +16,14 @@ public class WardrivingDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + WarDrivingDbContract.WifiEntry.TABLE_NAME + " (" +
-                    WarDrivingDbContract.WifiEntry._ID + " INTEGER PRIMARY KEY," +
-                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_BSSID + " TEXT," +
-                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_SSID + " TEXT," +
-                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_LAT + " REAL)" +
-                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_LON + " REAL)" +
-                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_MIN_LAT + " REAL)" +
-                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_MIN_LON + " REAL)" +
-                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_MAX_LAT + " REAL)" +
+                    WarDrivingDbContract.WifiEntry._ID + " INTEGER PRIMARY KEY, " +
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_BSSID + " TEXT, " +
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_SSID + " TEXT, " +
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_LAT + " REAL, " +
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_LON + " REAL, " +
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_MIN_LAT + " REAL, " +
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_MIN_LON + " REAL, " +
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_MAX_LAT + " REAL, " +
                     WarDrivingDbContract.WifiEntry.COLUMN_NAME_MAX_LON + " REAL)";
 
     private static final String SQL_DELETE_ENTRIES =

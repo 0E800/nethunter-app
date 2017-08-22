@@ -128,7 +128,7 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
 
     private void importIntoDB(List<WirelessNetwork> networks) {
         DatabaseAccess dbAccess = new DatabaseAccess(getActivity());
-        dbAccess.execute(null, null);
+        dbAccess.execute(networks);
 
     }
 
@@ -213,7 +213,7 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
             if (event == XmlPullParser.START_TAG) {
                 if (parser.getName().equals("essid")) {
                     network.ssid = parser.nextText();
-                } else if (parser.getName().equals("bssid")) {
+                } else if (parser.getName().equals("BSSID")) {
                     network.bssid = parser.nextText();
                 } else if (parser.getName().equals("min-lat")) {
                     network.minLat = Double.parseDouble(parser.nextText());
