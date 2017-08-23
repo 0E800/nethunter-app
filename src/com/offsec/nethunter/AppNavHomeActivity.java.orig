@@ -57,11 +57,16 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
 
-public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpdates.Provider {
+public class AppNavHomeActivity extends AppCompatActivity implements
+        KaliGPSUpdates.Provider, FragmentSwitcher,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        CapabilityApi.CapabilityListener {
 
     public final static String TAG = "AppNavHomeActivity";
     private static final String CHROOT_INSTALLED_TAG = "CHROOT_INSTALLED_TAG";
     private static final String GPS_BACKGROUND_FRAGMENT_TAG = "BG_FRAGMENT_TAG";
+    private static final String CAPABILITY_WEAR_APP = "verify_remote_nethunter_wear_app";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -78,9 +83,20 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
     private Integer permsCurrent = 1;
     private boolean locationUpdatesRequested = false;
     private KaliGPSUpdates.Receiver locationUpdateReceiver;
+    private GoogleApiClient mGoogleApiClient = null;
+    private Set<Node> mWearNodesWithApp;
+    private List<Node> mAllConnectedNodes;
 
     public static Context getAppContext() {
         return c;
+    }
+
+    private ActivityResultListener activityResultListener = null;
+
+
+
+    public interface ActivityResultListener {
+        void onActivityResult(int requestCode, int resultCode, Intent data);
     }
 
     @Override
@@ -179,6 +195,38 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
         // pre-set the drawer options
         setDrawerOptions();
 
+        // Initialize google api client for wearable extension
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause()");
+        super.onPause();
+
+        if ((mGoogleApiClient != null) && mGoogleApiClient.isConnected()) {
+
+            Wearable.CapabilityApi.removeCapabilityListener(
+                    mGoogleApiClient,
+                    this,
+                    CAPABILITY_WEAR_APP);
+
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume()");
+        super.onResume();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
     }
 
     public static void setDrawerOptions() {
@@ -256,8 +304,148 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
                         mTitle = menuItem.getTitle();
                         titles.push(mTitle.toString());
                         int itemId = menuItem.getItemId();
+<<<<<<< HEAD
 
                         switchFragment(itemId);
+=======
+                        switch (itemId) {
+                            case R.id.nethunter_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, NetHunterFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            /*
+                            case R.id.kalilauncher_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, KaliLauncherFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            */
+                            case R.id.deauth_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, DeAuthFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.kaliservices_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, KaliServicesFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+
+                            case R.id.custom_commands_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, CustomCommandsFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+
+                            case R.id.hid_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, HidFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.duckhunter_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, DuckHunterFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.badusb_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, BadusbFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.mana_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, ManaFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.macchanger_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, MacchangerFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.createchroot_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, ChrootManagerFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.mpc_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, MPCFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.mitmf_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, MITMfFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.vnc_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, VNCFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.searchsploit_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, SearchSploitFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.nmap_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, NmapFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+                            case R.id.pineapple_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, PineappleFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+
+                            case R.id.gps_item:
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.container, WardrivingFragment.newInstance(itemId))
+                                        .addToBackStack(null)
+                                        .commit();
+                                break;
+
+                            case R.id.checkforupdate_item:
+                                checkUpdate();
+                                break;
+                        }
+>>>>>>> wardriving-map
                         restoreActionBar();
                         return true;
                     }
@@ -563,6 +751,14 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (activityResultListener != null) {
+            activityResultListener.onActivityResult(requestCode, resultCode, data);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onLocationUpdatesRequested(KaliGPSUpdates.Receiver receiver) {
         this.locationUpdateReceiver = receiver;
         locationUpdatesRequested = true;
@@ -578,7 +774,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
     }
 
     private LocationUpdateService locationService;
-    private boolean updateServiceBound = false;
     private ServiceConnection locationServiceConnection = new ServiceConnection() {
 
         @Override
@@ -587,7 +782,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
             // We've bound to Update Service, cast the IBinder and get LocalService instance
             LocationUpdateService.ServiceBinder binder = (LocationUpdateService.ServiceBinder) service;
             locationService = binder.getService();
-            updateServiceBound = true;
             if (locationUpdatesRequested) {
                 locationService.requestUpdates(locationUpdateReceiver);
             }
@@ -596,7 +790,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            updateServiceBound = false;
+
         }
     };
 
@@ -618,7 +812,125 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
                         .addToBackStack(null)
                         .commit();
         }
-    
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected()");
+
+        // Set up listeners for capability changes (install/uninstall of remote app).
+        Wearable.CapabilityApi.addCapabilityListener(
+                mGoogleApiClient,
+                this,
+                CAPABILITY_WEAR_APP);
+
+        // Initial request for devices with our capability, aka, our Wear app installed.
+        findWearDevicesWithApp();
+
+        // Initial request for all Wear devices connected (with or without our capability).
+        // Additional Note: Because there isn't a listener for ALL Nodes added/removed from network
+        // that isn't deprecated, we simply update the full list when the Google API Client is
+        // connected and when capability changes come through in the onCapabilityChanged() method.
+        findAllWearDevices();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "onConnectionSuspended(): connection to google api client suspended: " + i);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e(TAG, "onConnectionFailed(): " + connectionResult);
+    }
+
+    @Override
+    public void onCapabilityChanged(CapabilityInfo capabilityInfo) {
+        Log.d(TAG, "onCapabilityChanged(): " + capabilityInfo);
+
+        mWearNodesWithApp = capabilityInfo.getNodes();
+
+        // Because we have an updated list of devices with/without our app, we need to also update
+        // our list of active Wear devices.
+        findAllWearDevices();
+
+        verifyNode();
+    }
+
+
+    private void findWearDevicesWithApp() {
+        Log.d(TAG, "findWearDevicesWithApp()");
+
+        // You can filter this by FILTER_REACHABLE if you only want to open Nodes (Wear Devices)
+        // directly connect to your phone.
+        PendingResult<CapabilityApi.GetCapabilityResult> pendingResult =
+                Wearable.CapabilityApi.getCapability(
+                        mGoogleApiClient,
+                        CAPABILITY_WEAR_APP,
+                        CapabilityApi.FILTER_REACHABLE);
+
+        pendingResult.setResultCallback(new ResultCallback<CapabilityApi.GetCapabilityResult>() {
+            @Override
+            public void onResult(@NonNull CapabilityApi.GetCapabilityResult getCapabilityResult) {
+                Log.d(TAG, "onResult(): " + getCapabilityResult);
+
+                if (getCapabilityResult.getStatus().isSuccess()) {
+                    CapabilityInfo capabilityInfo = getCapabilityResult.getCapability();
+                    mWearNodesWithApp = capabilityInfo.getNodes();
+                    verifyNode();
+
+                } else {
+                    Log.d(TAG, "Failed CapabilityApi: " + getCapabilityResult.getStatus());
+                }
+            }
+        });
+    }
+
+    private void verifyNode() {
+        Log.d(TAG, "verifyNode()");
+
+        if ((mWearNodesWithApp == null) || (mAllConnectedNodes == null)) {
+            Log.d(TAG, "Waiting on Results for both connected nodes and nodes with app");
+
+        } else if (mAllConnectedNodes.isEmpty()) {
+            Log.d(TAG, "No wear devices connected");
+
+        } else if (mWearNodesWithApp.isEmpty()) {
+            Log.d(TAG, "No connected devices with app");
+
+        } else if (mWearNodesWithApp.size() < mAllConnectedNodes.size()) {
+            // TODO: Add your code to communicate with the wear app(s) via
+            // Wear APIs (MessageApi, DataApi, etc.)
+
+            Log.d(TAG, "Installed some devices: " + mWearNodesWithApp.toString());
+
+        } else {
+            // TODO: Add your code to communicate with the wear app(s) via
+            // Wear APIs (MessageApi, DataApi, etc.)
+            Log.d(TAG, "Installed all devices: " + mWearNodesWithApp);
+
+        }
+    }
+
+    private void findAllWearDevices() {
+        Log.d(TAG, "findAllWearDevices()");
+
+        PendingResult<NodeApi.GetConnectedNodesResult> pendingResult =
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
+
+        pendingResult.setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(@NonNull NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+
+                if (getConnectedNodesResult.getStatus().isSuccess()) {
+                    mAllConnectedNodes = getConnectedNodesResult.getNodes();
+                    verifyNode();
+
+                } else {
+                    Log.d(TAG, "Failed CapabilityApi: " + getConnectedNodesResult.getStatus());
+                }
+            }
+        });
     }
 }
 

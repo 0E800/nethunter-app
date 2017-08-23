@@ -35,8 +35,12 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+<<<<<<< HEAD
 
 public class ManaFragment extends KaliBaseFragment {
+=======
+public class ManaFragment extends Fragment {
+>>>>>>> wardriving-map
 
     private ViewPager mViewPager;
 
@@ -99,6 +103,7 @@ public class ManaFragment extends KaliBaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
+//Todo: switch executable with android version and with preference to use native or juicessh
         switch (item.getItemId()) {
             case R.id.mana_nat_full:
                 return true;

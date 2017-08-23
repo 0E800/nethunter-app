@@ -1,15 +1,22 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
     }
     dependencies {
+<<<<<<< HEAD
+        classpath 'com.android.tools.build:gradle:2.3.3'
+=======
         classpath 'com.android.tools.build:gradle:3.0.0-beta2'
+>>>>>>> wardriving-map
     }
 }
 
 task wrapper(type: Wrapper) {
+<<<<<<< HEAD
+    gradleVersion = '4.0.2' //version required
+=======
     gradleVersion = '4.1' //version required
+>>>>>>> wardriving-map
 }
 
 apply plugin: 'com.android.application'
@@ -32,6 +39,19 @@ allprojects {
 
 
 dependencies {
+<<<<<<< HEAD
+    compile project(':androidwversionmanager')
+    compile 'com.android.support:support-v4:26.0.0'
+    compile 'com.android.support:appcompat-v7:26.0.0'
+    compile 'com.android.support:design:26.0.0'
+    compile 'com.google.guava:guava:20.0'
+    compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
+    compile 'com.google.android.gms:play-services-location:11.0.4'
+    compile 'com.google.android.gms:play-services-wearable:11.0.4'
+    compile 'joda-time:joda-time:2.9.7'
+    compile 'com.android.support:preference-v14:26.0.0'
+    compile 'com.sshtools:j2ssh-maverick:1.5.5'
+=======
     implementation 'com.android.support:support-v4:26.0.1'
     implementation 'com.android.support:appcompat-v7:26.0.1'
     implementation 'com.android.support:design:26.0.1'
@@ -41,11 +61,18 @@ dependencies {
     implementation 'joda-time:joda-time:2.9.7'
     implementation 'com.google.guava:guava:23.0-android'
     implementation 'com.google.android.gms:play-services-maps:11.2.0'
-    compile 'com.android.support:preference-v14:26.0.0'
-    compile 'com.sshtools:j2ssh-maverick:1.5.5'
+>>>>>>> wardriving-map
 }
 
 android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
+
+<<<<<<< HEAD
+    dataBinding {
+        enabled = true
+    }
+=======
     compileSdkVersion 26
     buildToolsVersion '26.0.1'
 
@@ -53,13 +80,18 @@ android {
         enabled = true
     }
 
+>>>>>>> wardriving-map
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
+<<<<<<< HEAD
+        minSdkVersion 23
+=======
         minSdkVersion 17
+>>>>>>> wardriving-map
         targetSdkVersion 26
         versionCode 22
         versionName "3.16"

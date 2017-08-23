@@ -15,7 +15,7 @@ import java.net.SocketAddress;
 
 
 public class GpsdServer extends AsyncTask<Void, Void, Void> {
-    private static final String SCRIPT_PATH =  "/data/data/com.offsec.nethunter/files/scripts/";
+    private static final String SCRIPT_PATH = "/data/data/com.offsec.nethunter/files/scripts/";
 
     private static final String TAG = "GpsdServer";
 
@@ -23,7 +23,7 @@ public class GpsdServer extends AsyncTask<Void, Void, Void> {
         this.listener = listener;
     }
 
-    public interface ConnectionListener {
+    interface ConnectionListener {
         void onSocketConnected(Socket clientSocket);
     }
 
@@ -54,7 +54,7 @@ public class GpsdServer extends AsyncTask<Void, Void, Void> {
                         e.printStackTrace();
                     }
                     ShellExecuter exe = new ShellExecuter();
-                    String command = "su -c '" + SCRIPT_PATH + File.separator + "bootkali start_gpsd " + String.valueOf(PORT) + "'";
+                   String command = "su -c '" + SCRIPT_PATH + File.separator + "bootkali start_gpsd " + String.valueOf(PORT) + "'";
                     Log.d(TAG, command);
                     String response = exe.RunAsRootOutput(command);
                     Log.d(TAG, "Response = " + response);
