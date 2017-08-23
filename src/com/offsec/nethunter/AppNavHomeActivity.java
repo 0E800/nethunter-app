@@ -36,15 +36,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.wearable.CapabilityApi;
-import com.google.android.gms.wearable.CapabilityInfo;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
 import com.offsec.nethunter.gps.KaliGPSUpdates;
 import com.offsec.nethunter.gps.LocationUpdateService;
 import com.offsec.nethunter.ssh.PlayManaFragment;
@@ -57,7 +48,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
 
-public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpdates.Provider {
+public class AppNavHomeActivity extends AppCompatActivity implements
+        KaliGPSUpdates.Provider, FragmentSwitcher {
 
     public final static String TAG = "AppNavHomeActivity";
     private static final String CHROOT_INSTALLED_TAG = "CHROOT_INSTALLED_TAG";
@@ -394,7 +386,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements KaliGPSUpda
             case R.id.gps_item:
                 fragmentManager
                         .beginTransaction()
-                        .replace(R.id.container, KaliGpsServiceFragment.newInstance(itemId))
+                        .replace(R.id.container, WardrivingFragment.newInstance(itemId))
                         .addToBackStack(null)
                         .commit();
                 break;

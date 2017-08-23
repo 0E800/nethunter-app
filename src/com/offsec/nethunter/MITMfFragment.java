@@ -78,11 +78,10 @@ public class MITMfFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        cleanCmd();
         View rootView = inflater.inflate(R.layout.mitmf, container, false);
         tabsPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
 
-        ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.pagerMITMF);
+        ViewPager mViewPager = rootView.findViewById(R.id.pagerMITMF);
         mViewPager.setAdapter(tabsPagerAdapter);
 
         nh = new NhPaths();
@@ -454,17 +453,17 @@ public class MITMfFragment extends Fragment {
             final View rootView = inflater.inflate(R.layout.source_short, container, false);
 
             String description = getResources().getString(R.string.mitmf_config);
-            TextView desc = (TextView) rootView.findViewById(R.id.description);
+            TextView desc = rootView.findViewById(R.id.description);
             desc.setText(description);
 
 
-            EditText source = (EditText) rootView.findViewById(R.id.source);
+            EditText source = rootView.findViewById(R.id.source);
             exe.ReadFile_ASYNC(configFilePath, source);
-            Button button = (Button) rootView.findViewById(R.id.update);
+            Button button = rootView.findViewById(R.id.update);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditText source = (EditText) rootView.findViewById(R.id.source);
+                    EditText source = rootView.findViewById(R.id.source);
                     Boolean isSaved = exe.SaveFileContents(source.getText().toString(), configFilePath);
                     if (isSaved) {
                         nh.showMessage("Source updated");
@@ -474,12 +473,6 @@ public class MITMfFragment extends Fragment {
                 }
             });
             return rootView;
-        }
-    }
-
-    private static void cleanCmd() {
-        for (int j = CommandComposed.size() - 1; j >= 0; j--) {
-            CommandComposed.remove(j);
         }
     }
 
