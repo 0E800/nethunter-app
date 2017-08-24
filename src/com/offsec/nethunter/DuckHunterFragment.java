@@ -77,7 +77,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
         View rootView = inflater.inflate(R.layout.duck_hunter, container, false);
         DuckHunterFragment.TabsPagerAdapter tabsPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
 
-        mViewPager = (ViewPager) rootView.findViewById(R.id.pagerDuckHunter);
+        mViewPager = rootView.findViewById(R.id.pagerDuckHunter);
         mViewPager.setAdapter(tabsPagerAdapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -154,7 +154,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
         switch (item.getItemId()) {
             case R.id.duckConvertAttack:
                 setLang();
-                nh.showMessage("Launching Attack");
+                nh.showMessage("Launching Attack", getActivity());
                 if (getView() == null) {
                     return true;
                 }
@@ -162,7 +162,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                 new Thread(new Runnable() {
                     public void run() {
                         if (shouldConvert) {
-                            convert();
+                            convert(getActivity());
                             try {
                                 Thread.sleep(2000);  // Slow down
                             } catch (InterruptedException e) {
@@ -173,7 +173,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                         v.post(new Runnable() {
                             @Override
                             public void run() {
-                                nh.showMessage("Attack launched!");
+                                nh.showMessage("Attack launched!", getActivity());
                             }
                         });
                     }
@@ -188,7 +188,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
         }
     }
 
-    private static Boolean updatefile() {
+    private static Boolean updatefile(Context context) {
         try {
             File myFile = new File(nh.APP_SD_FILES_PATH, DuckHunterConvertFragment.configFilePath);
             myFile.createNewFile();
@@ -199,15 +199,15 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
             fOut.close();
             return true;
         } catch (Exception e) {
-            nh.showMessage(e.getMessage());
+            nh.showMessage(e.getMessage(), context);
             return false;
         }
 
     }
 
-    private static void convert() {
+    private static void convert(Context context) {
         ShellExecuter exe = new ShellExecuter();
-        if (updatefile()) {
+        if (updatefile(context)) {
             String[] command = new String[1];
             Log.d("LANGGG", lang);
             command[0] = "su -c '" + nh.APP_SCRIPTS_PATH + "/bootkali duck-hunt-convert " + lang +
@@ -242,11 +242,11 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                         return;
                     }
 
-                    final TextView source = (TextView) getView().findViewById(R.id.source);
+                    final TextView source = getView().findViewById(R.id.source);
                     source.setText("Loading wait...");
                     new Thread(new Runnable() {
                         public void run() {
-                            convert();
+                            convert(getActivity());
                             String output = "";
                             try {
                                 Thread.sleep(2000);
@@ -276,7 +276,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                 } else {
                     new Thread(new Runnable() {
                         public void run() {
-                            convert();
+                            convert(getActivity());
                         }
                     }).start();
                 }
@@ -358,10 +358,10 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
 
             View rootView = inflater.inflate(R.layout.duck_hunter_convert, container, false);
 
-            TextView t2 = (TextView) rootView.findViewById(R.id.reference_text);
+            TextView t2 = rootView.findViewById(R.id.reference_text);
             t2.setMovementMethod(LinkMovementMethod.getInstance());
 
-            EditText source = (EditText) rootView.findViewById(R.id.editSource);
+            EditText source = rootView.findViewById(R.id.editSource);
 
             source.addTextChangedListener(new TextWatcher() {
 
@@ -395,14 +395,14 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
             }
             source.setText(text);
 
-            Button b = (Button) rootView.findViewById(R.id.duckyLoad);
-            Button b1 = (Button) rootView.findViewById(R.id.duckySave);
+            Button b = rootView.findViewById(R.id.duckyLoad);
+            Button b1 = rootView.findViewById(R.id.duckySave);
             b.setOnClickListener(this);
             b1.setOnClickListener(this);
 
 
             // Duckhunter preset spinner templates
-            Spinner presetSpinner = (Spinner) rootView.findViewById(R.id.duckhunter_preset_spinner);
+            Spinner presetSpinner = rootView.findViewById(R.id.duckhunter_preset_spinner);
             ArrayAdapter<CharSequence> presetAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.duckhunter_preset_array, android.R.layout.simple_spinner_item);
             presetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -444,7 +444,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
             }
             String filename_path = "/duckyscripts/";
             filename = filename_path + filename;
-            EditText source = (EditText) getView().findViewById(R.id.editSource);
+            EditText source = getView().findViewById(R.id.editSource);
             File file = new File(nh.APP_SD_FILES_PATH, filename);
             StringBuilder text = new StringBuilder();
             try {
@@ -469,7 +469,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                         File scriptsDir = new File(nh.APP_SD_FILES_PATH, loadFilePath);
                         if (!scriptsDir.exists()) scriptsDir.mkdirs();
                     } catch (Exception e) {
-                        nh.showMessage(e.getMessage());
+                        nh.showMessage(e.getMessage(), getActivity());
                     }
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     Uri selectedUri = Uri.parse(nh.APP_SD_FILES_PATH + loadFilePath);
@@ -482,7 +482,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                         File scriptsDir = new File(nh.APP_SD_FILES_PATH, loadFilePath);
                         if (!scriptsDir.exists()) scriptsDir.mkdirs();
                     } catch (Exception e) {
-                        nh.showMessage(e.getMessage());
+                        nh.showMessage(e.getMessage(), getActivity());
                     }
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
@@ -503,7 +503,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                                 if (!scriptFile.exists()) {
                                     try {
                                         if (getView() != null) {
-                                            EditText source = (EditText) getView().findViewById(R.id.editSource);
+                                            EditText source = getView().findViewById(R.id.editSource);
                                             String text = source.getText().toString();
                                             scriptFile.createNewFile();
                                             FileOutputStream fOut = new FileOutputStream(scriptFile);
@@ -511,16 +511,16 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                                             myOutWriter.append(text);
                                             myOutWriter.close();
                                             fOut.close();
-                                            nh.showMessage("Script saved");
+                                            nh.showMessage("Script saved", getActivity());
                                         }
                                     } catch (Exception e) {
-                                        nh.showMessage(e.getMessage());
+                                        nh.showMessage(e.getMessage(), getActivity());
                                     }
                                 } else {
-                                    nh.showMessage("File already exists");
+                                    nh.showMessage("File already exists", getActivity());
                                 }
                             } else {
-                                nh.showMessage("Wrong name provided");
+                                nh.showMessage("Wrong name provided", getActivity());
                             }
                         }
                     });
@@ -533,7 +533,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                     alert.show();
                     break;
                 default:
-                    nh.showMessage("Unknown click");
+                    nh.showMessage("Unknown click", getActivity());
                     break;
             }
         }
@@ -547,7 +547,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                             return;
                         }
                         String FilePath = data.getData().getPath();
-                        EditText source = (EditText) getView().findViewById(R.id.editSource);
+                        EditText source = getView().findViewById(R.id.editSource);
                         try {
                             String text = "";
                             BufferedReader br = new BufferedReader(new FileReader(FilePath));
@@ -557,9 +557,9 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                             }
                             br.close();
                             source.setText(text);
-                            nh.showMessage("Script loaded");
+                            nh.showMessage("Script loaded", getActivity());
                         } catch (Exception e) {
-                            nh.showMessage(e.getMessage());
+                            nh.showMessage(e.getMessage(), getActivity());
                         }
                         break;
                     }
@@ -599,13 +599,13 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
                 return;
             }
 
-            final TextView source = (TextView) getView().findViewById(R.id.source);
+            final TextView source = getView().findViewById(R.id.source);
             source.setText(R.string.loading_wait);
             new Thread(new Runnable() {
                 public void run() {
                     String output = "";
                     if (shouldConvert) {
-                        convert();
+                        convert(getActivity());
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {

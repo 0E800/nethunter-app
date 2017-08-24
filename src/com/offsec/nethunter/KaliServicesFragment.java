@@ -84,12 +84,12 @@ public class KaliServicesFragment extends Fragment {
                     SharedPreferences.Editor ed = prefs.edit();
                     ed.putBoolean(RUN_AT_BOOT, false);
                     ed.apply();
-                    nh.showMessage("Boot Services DISABLED");
+                    nh.showMessage("Boot Services DISABLED", getActivity());
                 } else {
                     SharedPreferences.Editor ed = prefs.edit();
                     ed.putBoolean(RUN_AT_BOOT, true);
                     ed.apply();
-                    nh.showMessage("Boot Services ENABLED");
+                    nh.showMessage("Boot Services ENABLED", getActivity());
                 }
                 return true;
             default:

@@ -1,6 +1,7 @@
 package com.offsec.nethunter;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,6 +28,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -65,23 +67,16 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     private final Stack<String> titles = new Stack<>();
     private static SharedPreferences prefs;
     private MenuItem lastSelected;
-    private static Context c;
     private Boolean weCheckedForRoot = false;
     private Integer permsCurrent = 1;
     private boolean locationUpdatesRequested = false;
     private KaliGPSUpdates.Receiver locationUpdateReceiver;
 
-    public static Context getAppContext() {
-        return c;
-    }
-
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        // ************************************************
-        c = getApplication(); //* DONT REMOVE ME *
-        // ************************************************
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             askMarshmallowPerms(permsCurrent);
         } else {
@@ -89,6 +84,8 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.base_layout);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //set kali wallpaper as background
         ActionBar ab = getSupportActionBar();
@@ -96,9 +93,9 @@ public class AppNavHomeActivity extends AppCompatActivity implements
             ab.setHomeButtonEnabled(true);
             ab.setDisplayHomeAsUpEnabled(true);
         }
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView = findViewById(R.id.navigation_view);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout navigationHeadView = (LinearLayout) inflater.inflate(R.layout.sidenav_header, null);
         navigationView.addHeaderView(navigationHeadView);
@@ -107,7 +104,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         readmeButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                //checkUpdate();
                 showLicense();
                 return false;
             }

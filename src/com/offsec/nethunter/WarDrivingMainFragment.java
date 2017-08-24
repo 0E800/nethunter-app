@@ -77,18 +77,7 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
 
         addClickListener(R.id.gps_stop, new View.OnClickListener() {
             public void onClick(View v) {
-                if (gpsProvider != null) {
-                    gpsProvider.onStopRequested();
-                    gpsTextView.append("Stopping gps updates \n");
-                    new Thread(new Runnable() {
-                        public void run() {
-                            ShellExecuter exe = new ShellExecuter();
-                            String command = "su -c '" + nh.APP_SCRIPTS_PATH + "/stop-gpsd'";
-                            Log.d(TAG, command);
-                            exe.RunAsRootOutput(command);
-                        }
-                    }).start();
-                }
+                stopGPS();
             }
         }, rootView);
 
@@ -100,6 +89,21 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
         }, rootView);
 
         return rootView;
+    }
+
+    private void stopGPS() {
+        if (gpsProvider != null) {
+            gpsProvider.onStopRequested();
+            gpsTextView.append("Stopping gps updates \n");
+            new Thread(new Runnable() {
+                public void run() {
+                    ShellExecuter exe = new ShellExecuter();
+                    String command = "su -c '" + nh.APP_SCRIPTS_PATH + "/stop-gpsd'";
+                    Log.d(TAG, command);
+                    exe.RunAsRootOutput(command);
+                }
+            }).start();
+        }
     }
 
     private void selectFile() {
@@ -280,6 +284,12 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
         } catch (Exception e) {
             Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopGPS();
     }
 
     private static class WirelessNetwork {

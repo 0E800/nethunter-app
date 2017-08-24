@@ -7,8 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,8 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,7 +31,6 @@ import com.offsec.nethunter.utils.ShellExecuter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MITMfFragment extends Fragment {
 
@@ -125,14 +120,14 @@ public class MITMfFragment extends Fragment {
         }
 
         intentClickListener_NH("mitmf " + sb.toString());
-        nh.showMessage("MITMf Started!");
+        nh.showMessage("MITMf Started!", getActivity());
     }
 
     private void stop() {
         ShellExecuter exe = new ShellExecuter();
         String[] command = new String[1];
         exe.RunAsRoot(command);
-        nh.showMessage("MITMf Stopped!");
+        nh.showMessage("MITMf Stopped!", getActivity());
     }
     /* Stop execution menu */
 
@@ -466,9 +461,9 @@ public class MITMfFragment extends Fragment {
                     EditText source = rootView.findViewById(R.id.source);
                     Boolean isSaved = exe.SaveFileContents(source.getText().toString(), configFilePath);
                     if (isSaved) {
-                        nh.showMessage("Source updated");
+                        nh.showMessage("Source updated", getActivity());
                     } else {
-                        nh.showMessage("Source not updated");
+                        nh.showMessage("Source not updated", getActivity());
                     }
                 }
             });

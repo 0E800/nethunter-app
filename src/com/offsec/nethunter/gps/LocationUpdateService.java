@@ -200,6 +200,7 @@ public class LocationUpdateService extends Service implements GpsdServer.Connect
     public void stopUpdates() {
         Log.d(TAG, "In stopUpdates");
         requestedLocationUpdates = false;
+        firstupdate = true;
         this.updateReceiver = null;
         stopSelf();
     }

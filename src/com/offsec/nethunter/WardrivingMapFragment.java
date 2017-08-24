@@ -44,7 +44,7 @@ public class WardrivingMapFragment extends Fragment implements OnMapReadyCallbac
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.wardriving_map, container, false);
 
-        mapView = (MapView) rootView.findViewById(R.id.mapView);
+        mapView = rootView.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
@@ -52,15 +52,7 @@ public class WardrivingMapFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        //        Todo: connect to database asynchronously for ssids
-//        SQLiteDatabase.openDatabase("/data/", null , SQLiteDatabase.OPEN_READONLY);
-    }
-
-    @Override
     public void onMapReady(GoogleMap map) {
-        map.getUiSettings().setMyLocationButtonEnabled(true);
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -69,7 +61,8 @@ public class WardrivingMapFragment extends Fragment implements OnMapReadyCallbac
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            // for ActivityCompat#requestPermissions for more details
+            map.getUiSettings().setMyLocationButtonEnabled(true);
             return;
         }
 
@@ -124,20 +117,22 @@ public class WardrivingMapFragment extends Fragment implements OnMapReadyCallbac
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             // Create a new map of values, where column names are the keys
             String[] projection = {
+                    WarDrivingDbContract.WifiEntry.COLUMN_NAME_BSSID,
                     WarDrivingDbContract.WifiEntry.COLUMN_NAME_SSID,
                     WarDrivingDbContract.WifiEntry.COLUMN_NAME_LAT,
                     WarDrivingDbContract.WifiEntry.COLUMN_NAME_LON
             };
 
-// Filter results WHERE "title" = 'My Title'
-            String selection = WarDrivingDbContract.WifiEntry.COLUMN_NAME_SSID + " = ?";
-            String[] selectionArgs = { "*" };
 
             Cursor cursor = db.query(
                     WarDrivingDbContract.WifiEntry.TABLE_NAME, projection, null, null, null, null, null);
 
+            // Bssids already in database. delete any duplicate rows
+            List<String> bssids = new ArrayList<>();
             List<MarkerOptions> markerOptions = new ArrayList<>();
             while(cursor.moveToNext()) {
+                String bssid = cursor.getString(
+                        cursor.getColumnIndexOrThrow(WarDrivingDbContract.WifiEntry.COLUMN_NAME_SSID));
                 String ssid = cursor.getString(
                         cursor.getColumnIndexOrThrow(WarDrivingDbContract.WifiEntry.COLUMN_NAME_SSID));
                 Double lat = cursor.getDouble(
@@ -145,11 +140,18 @@ public class WardrivingMapFragment extends Fragment implements OnMapReadyCallbac
                 Double lon = cursor.getDouble(
                         cursor.getColumnIndexOrThrow(WarDrivingDbContract.WifiEntry.COLUMN_NAME_LON));
 
-                MarkerOptions markerOption = new MarkerOptions()
-                        .position(new LatLng(lat, lon))
-                        .title(ssid);
+                if (bssids.contains(bssid)) {
+                    db.delete(WarDrivingDbContract.WifiEntry.TABLE_NAME, "WHERE " +
+                            WarDrivingDbContract.WifiEntry.COLUMN_NAME_BSSID + " == ?", new String[]{bssid});
+                } else {
+                    bssids.add(bssid);
+                    MarkerOptions markerOption = new MarkerOptions()
+                            .position(new LatLng(lat, lon))
+                            .title(ssid);
 
-                markerOptions.add(markerOption);
+                    markerOptions.add(markerOption);
+                }
+
 
             }
             cursor.close();

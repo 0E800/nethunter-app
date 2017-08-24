@@ -82,7 +82,7 @@ public class PineappleFragment extends Fragment {
                         exe.RunAsRootOutput(command);
                     }
                 }).start();
-                nh.showMessage("Starting eth0 connection");
+                nh.showMessage("Starting eth0 connection", getActivity());
             }
         }, rootView);
 
@@ -97,7 +97,7 @@ public class PineappleFragment extends Fragment {
                         exe.RunAsRootOutput(command);
                     }
                 }).start();
-                nh.showMessage("Bringing down eth0 conneciton");
+                nh.showMessage("Bringing down eth0 conneciton", getActivity());
             }
         }, rootView);
 

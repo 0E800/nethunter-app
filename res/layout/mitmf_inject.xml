@@ -8,7 +8,7 @@
             type="com.offsec.nethunter.MITMFViewModel" />
     </data>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
@@ -183,5 +183,5 @@
 
             </android.support.design.widget.TextInputLayout>
     </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 </layout>

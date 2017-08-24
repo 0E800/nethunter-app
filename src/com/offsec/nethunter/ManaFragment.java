@@ -31,7 +31,6 @@ import com.offsec.nethunter.utils.ShellExecuter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,7 +130,7 @@ public class ManaFragment extends KaliBaseFragment {
                 switch (selectedScriptIndex) {
                     // launching mana on the terminal so it doesnt die suddenly
                     case 0:
-                        nh.showMessage("Starting MANA NAT FULL");
+                        nh.showMessage("Starting MANA NAT FULL", getActivity());
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             intentClickListener_NH(nh.makeTermTitle("MANA-FULL") + "/usr/share/mana-toolkit/run-mana/start-nat-full-lollipop.sh");
                         } else {
@@ -139,7 +138,7 @@ public class ManaFragment extends KaliBaseFragment {
                         }
                         break;
                     case 1:
-                        nh.showMessage("Starting MANA NAT SIMPLE");
+                        nh.showMessage("Starting MANA NAT SIMPLE", getActivity());
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             intentClickListener_NH(nh.makeTermTitle("MANA-SIMPLE") + "/usr/share/mana-toolkit/run-mana/start-nat-simple-lollipop.sh");
                         } else {
@@ -147,11 +146,11 @@ public class ManaFragment extends KaliBaseFragment {
                         }
                         break;
                     case 2:
-                        nh.showMessage("Starting MANA Bettercap");
+                        nh.showMessage("Starting MANA Bettercap", getActivity());
                         intentClickListener_NH(nh.makeTermTitle("MANA-BETTERCAP") + "/usr/bin/start-nat-transproxy-lollipop.sh");
                         break;
                     case 3:
-                        nh.showMessage("Starting MANA NAT SIMPLE && BDF");
+                        nh.showMessage("Starting MANA NAT SIMPLE && BDF", getActivity());
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             intentClickListener_NH(nh.makeTermTitle("MANA-BDF") + "/usr/share/mana-toolkit/run-mana/start-nat-simple-bdf-lollipop.sh");
                         } else {
@@ -161,24 +160,24 @@ public class ManaFragment extends KaliBaseFragment {
                         new android.os.Handler().postDelayed(
                                 new Runnable() {
                                     public void run() {
-                                        nh.showMessage("Starting MSF with BDF resource.rc");
+                                        nh.showMessage("Starting MSF with BDF resource.rc", getActivity());
                                         intentClickListener_NH(nh.makeTermTitle("MSF") + "msfconsole -q -r /usr/share/bdfproxy/bdfproxy_msf_resource.rc");
                                     }
                                 }, 10000);
                         break;
                     case 4:
-                        nh.showMessage("Starting HOSTAPD-WPE");
+                        nh.showMessage("Starting HOSTAPD-WPE", getActivity());
                         intentClickListener_NH(nh.makeTermTitle("HOSTAPD-WPE") + "ifconfig wlan1 up && /usr/bin/hostapd-wpe /sdcard/nh_files/configs/hostapd-wpe.conf");
                         break;
                     case 5:
-                        nh.showMessage("Starting HOSTAPD-WPE with Karma");
+                        nh.showMessage("Starting HOSTAPD-WPE with Karma", getActivity());
                         intentClickListener_NH(nh.makeTermTitle("HOSTAPD-WPE-KARMA") + "ifconfig wlan1 up && /usr/bin/hostapd-wpe -k /sdcard/nh_files/configs/hostapd-wpe.conf");
                         break;
                     default:
-                        nh.showMessage("Invalid script!");
+                        nh.showMessage("Invalid script!", getActivity());
                         return;
                 }
-                nh.showMessage("Attack Launched!");
+                nh.showMessage("Attack Launched!", getActivity());
             }
         });
         builder.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
@@ -206,7 +205,7 @@ public class ManaFragment extends KaliBaseFragment {
             command[0] = "su -c '" + nh.APP_SCRIPTS_PATH + "/bootkali mana-kitkat stop'";
         }
         exe.RunAsRoot(command);
-        nh.showMessage("Mana Stopped");
+        nh.showMessage("Mana Stopped", getActivity());
     }
 
     public class TabsPagerAdapter extends FragmentPagerAdapter {
@@ -336,7 +335,7 @@ public class ManaFragment extends KaliBaseFragment {
                         source = source.replaceAll("(?m)^mana_loud=(.*)$", "mana_loud=" + karmaLoud.getText().toString());
 
                         exe.SaveFileContents(source, configFilePath);
-                        nh.showMessage("Source updated");
+                        nh.showMessage("Source updated", getActivity());
                     }
 
                 }
@@ -489,7 +488,7 @@ public class ManaFragment extends KaliBaseFragment {
                         source = source.replaceAll("(?m)^private_key_passwd=(.*)$", "private_key_passwd=" + privatekey.getText().toString());
 
                         exe.SaveFileContents(source, configFilePath);
-                        nh.showMessage("Source updated");
+                        nh.showMessage("Source updated", getActivity());
                     }
 
                 }
@@ -602,9 +601,9 @@ public class ManaFragment extends KaliBaseFragment {
                     EditText source = (EditText) rootView.findViewById(R.id.source);
                     Boolean isSaved = exe.SaveFileContents(source.getText().toString(), configFilePath);
                     if (isSaved) {
-                        nh.showMessage("Source updated");
+                        nh.showMessage("Source updated", getActivity());
                     } else {
-                        nh.showMessage("Source not updated");
+                        nh.showMessage("Source not updated", getActivity());
                     }
                 }
             });
@@ -641,7 +640,7 @@ public class ManaFragment extends KaliBaseFragment {
                     EditText source = (EditText) getView().findViewById(R.id.source);
                     String newSource = source.getText().toString();
                     exe.SaveFileContents(newSource, configFilePath);
-                    nh.showMessage("Source updated");
+                    nh.showMessage("Source updated", getActivity());
                 }
             });
             return rootView;
@@ -681,7 +680,7 @@ public class ManaFragment extends KaliBaseFragment {
                     String newSource = source.getText().toString();
                     ShellExecuter exe = new ShellExecuter();
                     exe.SaveFileContents(newSource, configFilePath);
-                    nh.showMessage("Source updated");
+                    nh.showMessage("Source updated", getActivity());
                 }
             });
             return rootView;
@@ -722,7 +721,7 @@ public class ManaFragment extends KaliBaseFragment {
                     String newSource = source.getText().toString();
                     ShellExecuter exe = new ShellExecuter();
                     exe.SaveFileContents(newSource, configFilePath);
-                    nh.showMessage("Source updated");
+                    nh.showMessage("Source updated", getActivity());
                 }
             });
             return rootView;
@@ -759,7 +758,7 @@ public class ManaFragment extends KaliBaseFragment {
                     String newSource = source.getText().toString();
                     ShellExecuter exe = new ShellExecuter();
                     exe.SaveFileContents(newSource, configFilePath);
-                    nh.showMessage("Source updated");
+                    nh.showMessage("Source updated", getActivity());
                 }
             });
             return rootView;
@@ -796,7 +795,7 @@ public class ManaFragment extends KaliBaseFragment {
                     String newSource = source.getText().toString();
                     ShellExecuter exe = new ShellExecuter();
                     exe.SaveFileContents(newSource, configFilePath);
-                    nh.showMessage("Source updated");
+                    nh.showMessage("Source updated", getActivity());
                 }
             });
             return rootView;
@@ -840,7 +839,7 @@ public class ManaFragment extends KaliBaseFragment {
                     String newSource = source.getText().toString();
                     ShellExecuter exe = new ShellExecuter();
                     exe.SaveFileContents(newSource, configFilePath);
-                    nh.showMessage("Source updated");
+                    nh.showMessage("Source updated", getActivity());
                 }
             });
             return rootView;

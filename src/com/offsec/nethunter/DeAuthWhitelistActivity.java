@@ -2,10 +2,8 @@ package com.offsec.nethunter;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
@@ -37,7 +35,7 @@ public class DeAuthWhitelistActivity extends AppCompatActivity {
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
-        nh.showMessage("File Loaded");
+        nh.showMessage("File Loaded", this);
     }
 
 
@@ -46,9 +44,9 @@ public class DeAuthWhitelistActivity extends AppCompatActivity {
         String newSource = source.getText().toString();
         Boolean isSaved = exe.SaveFileContents(newSource, "/sdcard/nh_files/deauth/whitelist.txt");
         if (isSaved) {
-            nh.showMessage("Source updated");
+            nh.showMessage("Source updated", this);
         } else {
-            nh.showMessage("Source not updated");
+            nh.showMessage("Source not updated", this);
         }
     }
 }

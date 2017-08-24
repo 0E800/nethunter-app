@@ -309,7 +309,7 @@
     <string name="extract_chroot">Decompressing and deploying the Chroot… (~5–10 min)</string>
 
     <!-- Start NMAP -->
-    <string name="nmap_hint">scanme.nmap.org, 192.168.0.1; 10.0.0–255.1&#8211;254</string>
+    <string name="nmap_hint">Ex: scanme.nmap.org, 192.168.0.1; 10.0.0–255.1&#8211;254</string>
     <string-array name="nmap_interface_array">
         <item>Select interface</item>
         <item>wlan0</item>

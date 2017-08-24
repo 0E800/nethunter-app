@@ -286,7 +286,7 @@ public class CustomCommandsFragment extends Fragment {
                                             userInputCommand.getText().toString(),
                                             command_exec_mode.getSelectedItem().toString(),
                                             command_run_in_shell.getSelectedItem().toString(), _run_at_boot);
-                                    nh.showMessage("Command created.");
+                                    nh.showMessage("Command created.", getActivity());
 
                                     if (_run_at_boot == 1) {
                                         addToBoot(_insertedCommand);
@@ -295,7 +295,7 @@ public class CustomCommandsFragment extends Fragment {
                                     commandList.add(0, _insertedCommand);
                                     commandAdapter.notifyDataSetChanged();
                                 } else {
-                                    nh.showMessage(getString(R.string.toast_input_error_launcher));
+                                    nh.showMessage(getString(R.string.toast_input_error_launcher), getActivity());
                                 }
                                 hideSoftKeyboard(getView());
                             }
@@ -362,12 +362,12 @@ public class CustomCommandsFragment extends Fragment {
                                     } else {
                                         removeFromBoot(_updatedCommand.getId());
                                     }
-                                    nh.showMessage("Command Updated");
+                                    nh.showMessage("Command Updated", getActivity());
                                     commandList.set(position, _updatedCommand);
                                     commandAdapter.notifyDataSetChanged();
 
                                 } else {
-                                    nh.showMessage(getString(R.string.toast_input_error_launcher));
+                                    nh.showMessage(getString(R.string.toast_input_error_launcher), getActivity());
                                 }
                                 hideSoftKeyboard(getView());
                             }
@@ -380,7 +380,7 @@ public class CustomCommandsFragment extends Fragment {
                                 commandList.remove(position);
                                 commandAdapter.notifyDataSetChanged();
                                 hideSoftKeyboard(getView());
-                                nh.showMessage("Command Deleted");
+                                nh.showMessage("Command Deleted", getActivity());
                             }
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();

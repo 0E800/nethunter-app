@@ -179,7 +179,7 @@ public class HidFragment extends Fragment {
                     command[0] = "su -c '" + nh.APP_SCRIPTS_PATH + "/bootkali start-rev-met-elevated-win10 --" + lang + "'";
                     break;
                 default:
-                    nh.showMessage("No option selected 1");
+                    nh.showMessage("No option selected 1", getActivity());
                     break;
             }
         } else if (pageNum == 1) {
@@ -197,11 +197,11 @@ public class HidFragment extends Fragment {
                     command[0] = "su -c '" + nh.APP_SCRIPTS_PATH + "/bootkali hid-cmd-elevated-win10 --" + lang + "'";
                     break;
                 default:
-                    nh.showMessage("No option selected 2");
+                    nh.showMessage("No option selected 2", getActivity());
                     break;
             }
         }
-        nh.showMessage("Attack launched...");
+        nh.showMessage("Attack launched...", getActivity());
         new Thread(new Runnable() {
             public void run() {
                 ShellExecuter exe = new ShellExecuter();
@@ -211,7 +211,7 @@ public class HidFragment extends Fragment {
                     @Override
                     public void run() {
 
-                        nh.showMessage("Attack execution ended.");
+                        nh.showMessage("Attack execution ended.", getActivity());
                     }
                 });
             }
@@ -223,7 +223,7 @@ public class HidFragment extends Fragment {
         ShellExecuter exe = new ShellExecuter();
         String[] command = {"stop-badusb"};
         exe.RunAsRoot(command);
-        nh.showMessage("Reseting USB");
+        nh.showMessage("Reseting USB", getActivity());
     }
 
 
@@ -352,11 +352,11 @@ public class HidFragment extends Fragment {
 
                     Boolean isSaved = exe.SaveFileContents(newText, configFileUrlPath);
                     if (!isSaved) {
-                        nh.showMessage("Source not updated (configFileUrlPath)");
+                        nh.showMessage("Source not updated (configFileUrlPath)", getActivity());
                     }
                     break;
                 default:
-                    nh.showMessage("Unknown click");
+                    nh.showMessage("Unknown click", getActivity());
                     break;
             }
         }
@@ -459,7 +459,7 @@ public class HidFragment extends Fragment {
                     String text = source.getText().toString();
                     Boolean isSaved = exe.SaveFileContents(text, configFilePath);
                     if (isSaved) {
-                        nh.showMessage("Source updated");
+                        nh.showMessage("Source updated", getActivity());
                     }
 
                     break;
@@ -468,7 +468,7 @@ public class HidFragment extends Fragment {
                         File scriptsDir = new File(nh.APP_SD_FILES_PATH, loadFilePath);
                         if (!scriptsDir.exists()) scriptsDir.mkdirs();
                     } catch (Exception e) {
-                        nh.showMessage(e.getMessage());
+                        nh.showMessage(e.getMessage(), getActivity());
                     }
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     Uri selectedUri = Uri.parse(nh.APP_SD_FILES_PATH + loadFilePath);
@@ -480,7 +480,7 @@ public class HidFragment extends Fragment {
                         File scriptsDir = new File(nh.APP_SD_FILES_PATH, loadFilePath);
                         if (!scriptsDir.exists()) scriptsDir.mkdirs();
                     } catch (Exception e) {
-                        nh.showMessage(e.getMessage());
+                        nh.showMessage(e.getMessage(), getActivity());
                     }
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
@@ -510,15 +510,15 @@ public class HidFragment extends Fragment {
                                         myOutWriter.append(text);
                                         myOutWriter.close();
                                         fOut.close();
-                                        nh.showMessage("Script saved");
+                                        nh.showMessage("Script saved", getActivity());
                                     } catch (Exception e) {
-                                        nh.showMessage(e.getMessage());
+                                        nh.showMessage(e.getMessage(), getActivity());
                                     }
                                 } else {
-                                    nh.showMessage("File already exists");
+                                    nh.showMessage("File already exists", getActivity());
                                 }
                             } else {
-                                nh.showMessage("Wrong name provided");
+                                nh.showMessage("Wrong name provided", getActivity());
                             }
                         }
                     });
@@ -530,7 +530,7 @@ public class HidFragment extends Fragment {
                     alert.show();
                     break;
                 default:
-                    nh.showMessage("Unknown click");
+                    nh.showMessage("Unknown click", getActivity());
                     break;
             }
         }
@@ -543,7 +543,7 @@ public class HidFragment extends Fragment {
                         String FilePath = data.getData().getPath();
                         EditText source = (EditText) getView().findViewById(R.id.windowsCmdSource);
                         exe.ReadFile_ASYNC(FilePath, source);
-                        nh.showMessage("Script loaded");
+                        nh.showMessage("Script loaded", getActivity());
                     }
                     break;
             }
@@ -577,11 +577,11 @@ public class HidFragment extends Fragment {
 
                     Boolean isSaved = exe.SaveFileContents(newText, configFileUrlPath);
                     if (!isSaved) {
-                        nh.showMessage("Source not updated (configFileUrlPath)");
+                        nh.showMessage("Source not updated (configFileUrlPath)", getActivity());
                     }
                     break;
                 default:
-                    nh.showMessage("Unknown click");
+                    nh.showMessage("Unknown click", getActivity());
                     break;
             }
         }

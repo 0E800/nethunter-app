@@ -1,11 +1,11 @@
 package com.offsec.nethunter.utils;
+
+import android.content.Context;
 import android.os.Environment;
 import android.view.Gravity;
 import android.widget.Toast;
 
 import java.io.File;
-
-import static com.offsec.nethunter.AppNavHomeActivity.getAppContext;
 
 
 /**********************************************
@@ -62,7 +62,6 @@ public class NhPaths {
     public NhPaths() {
         // App base path () /data/data/com.offsec.....
         this.APP_PATH = "/data/data/com.offsec.nethunter/files";
-        //this.APP_PATH = getAppContext().getFilesDir().toString();
         doSetup(this);
         /*  this one how should be called from inside android app context
         *   (anywhere but BOOTSERVICE):
@@ -102,9 +101,10 @@ public class NhPaths {
         nh.OLD_CHROOT_PATH = "/data/local/kali-armhf";
 
     }
-    public void showMessage(String message) {
+
+    public void showMessage(String message, Context context) {
         int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(getAppContext(), message, duration);
+        Toast toast = Toast.makeText(context, message, duration);
         toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
         toast.show();
     }

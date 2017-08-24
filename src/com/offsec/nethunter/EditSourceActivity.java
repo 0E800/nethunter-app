@@ -40,7 +40,7 @@ public class EditSourceActivity extends AppCompatActivity {
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
-        nh.showMessage("File Loaded");
+        nh.showMessage("File Loaded", this);
     }
 
     @Override
@@ -71,9 +71,9 @@ public class EditSourceActivity extends AppCompatActivity {
         String newSource = source.getText().toString();
         Boolean isSaved = exe.SaveFileContents(newSource, configFilePath);
         if (isSaved) {
-            nh.showMessage("Source updated");
+            nh.showMessage("Source updated", this);
         } else {
-            nh.showMessage("Source not updated");
+            nh.showMessage("Source not updated", this);
         }
     }
 }

@@ -457,7 +457,7 @@ public class ChrootManagerFragment extends Fragment {
             }
             statusLog("Metapackages selected: " + packages);
         } catch (Exception e) {
-            nh.showMessage(getString(R.string.toast_install_terminal));
+            nh.showMessage(getString(R.string.toast_install_terminal), getActivity());
             statusLog("Error: Terminal app not found, cant continue. Install a terminal.");
             checkForExistingChroot();
         }

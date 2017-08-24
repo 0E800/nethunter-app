@@ -125,9 +125,9 @@ public class BadusbFragment extends Fragment {
         sourceFile = sourceFile.replaceAll("(?m)^INTERFACE=(.*)$", "INTERFACE=" + ifc.getText().toString());
         Boolean r = exe.SaveFileContents(sourceFile, sourcePath);// 1st arg contents, 2nd arg filepath
         if (r) {
-            nh.showMessage("Options updated!");
+            nh.showMessage("Options updated!", getActivity());
         } else {
-            nh.showMessage("Options not updated!");
+            nh.showMessage("Options not updated!", getActivity());
         }
     }
 
@@ -140,7 +140,7 @@ public class BadusbFragment extends Fragment {
             command[0] = nh.APP_SCRIPTS_PATH + "/start-badusb-kitkat &> " + nh.APP_SD_FILES_PATH + "/badusb.log &";
         }
         exe.RunAsRoot(command);
-        nh.showMessage("BadUSB attack started! Check /sdcard/nh_files/badusb.log");
+        nh.showMessage("BadUSB attack started! Check /sdcard/nh_files/badusb.log", getActivity());
     }
 
     private void stop() {
@@ -152,6 +152,6 @@ public class BadusbFragment extends Fragment {
             command[0] = nh.APP_SCRIPTS_PATH + "/stop-badusb-kitkat";
         }
         exe.RunAsRoot(command);
-        nh.showMessage("BadUSB attack stopped!");
+        nh.showMessage("BadUSB attack stopped!", getActivity());
     }
 }
