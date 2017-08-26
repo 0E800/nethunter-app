@@ -102,7 +102,8 @@ public class ShellExecuter {
             throw new RuntimeException(ex);
         }
     }
-    boolean isRootAvailable() {
+
+    public boolean isRootAvailable() {
 
         NhPaths nh;
         nh = new NhPaths();

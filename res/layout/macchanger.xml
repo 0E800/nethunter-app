@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -19,41 +20,34 @@
             android:padding="4dp"
             android:text="@string/macchanger_description"
              />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="4dp"
-            android:text="Set Hostname"
-            android:textSize="18sp" />
 
-        <RelativeLayout
+        <LinearLayout
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:focusable="true"
             android:focusableInTouchMode="true">
 
-            <EditText
-                android:id="@+id/phone_nameText"
-                android:layout_width="match_parent"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="textNoSuggestions"
-                android:nextFocusUp="@id/phone_nameText"
-                android:nextFocusLeft="@id/phone_nameText"
-                android:paddingStart="4dp"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/setHostname" />
+                android:layout_weight="1"
+                android:id="@+id/set_hostname_layout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/phone_nameText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/set_hostname" />
+            </android.support.design.widget.TextInputLayout>
 
             <Button
-                style="?android:attr/buttonStyleSmall"
+                android:id="@+id/setHostname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Hostname"
-                android:id="@+id/setHostname"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true" />
-        </RelativeLayout>
+                android:text="@string/set" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -228,9 +222,10 @@
 
         <Button
             android:id="@+id/set_mac_button"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
             android:text="@string/changeMAC" />
 
         <TextView

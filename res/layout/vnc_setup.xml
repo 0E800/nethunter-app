@@ -1,4 +1,4 @@
-<LinearLayout
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -14,20 +14,20 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/base_listItem_LR"
             android:paddingRight="@dimen/base_listItem_LR">
+
             <TextView
+                style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="VNC Server Settings:"
-                android:textColor="@color/blue"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:text="VNC Server Settings"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
             <Button
                 android:id="@+id/set_up_vnc"
-                android:layout_weight="1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Setup Local Server"
-                android:textColor="#ffffffff" />
+                android:text="Setup Local Server" />
 
 
             <CheckBox
@@ -40,118 +40,107 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="right">
+
                 <Button
                     android:id="@+id/start_vnc"
-                    android:layout_weight="1"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start Server"
-                    android:textColor="#ffffffff" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@string/start" />
 
                 <Button
                     android:id="@+id/stop_vnc"
-                    android:layout_weight="1"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Stop Server"
-                    android:textColor="#ffffffff" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@string/stop" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="VNC Client Settings:"
-                android:textColor="@color/blue"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="14dp"
-                android:layout_gravity="center_horizontal" />
+                android:text="VNC Client Settings:"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="CONNECTION NAME"
-                android:layout_weight="1" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <EditText
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Connection Name"
+                    android:id="@+id/vnc_CONN_NICK" />
+            </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/vnc_CONN_NICK"
-                android:text="LOCAL CONNECTION"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="IP"
-                android:layout_weight="1" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content">
 
-            <EditText
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/vnc_R_IP"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/ip" />
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/vnc_R_PORT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/port"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/vnc_R_IP"
-                android:layout_gravity="center_horizontal"
-                android:text="127.0.0.1"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="PORT:"
-                android:layout_weight="1" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/vnc_USER"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/username_optional" />
 
-            <EditText
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/vnc_R_PORT"
-                android:text="5901"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/vnc_PASSWD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password"
+                    android:inputType="textVisiblePassword" />
+            </android.support.design.widget.TextInputLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="PASSWORD: "
-                android:maxLines="1"
-                android:maxLength="8"
-                android:layout_weight="1" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/vnc_PASSWD"
-                android:layout_weight="1"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="USER"
-                android:layout_weight="1" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/vnc_USER"
-                android:text="root"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="VNC RESOLUTION"
-                android:id="@+id/textView17"
-                android:layout_weight="1" />
+                android:text="@string/resolution"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -161,10 +150,9 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OPEN CONNECTION"
+                android:text="@string/open_connection"
                 android:id="@+id/vncClientStart"
-                android:layout_gravity="right"
-                android:layout_weight="1" />
+                android:layout_gravity="right" />
 
         </LinearLayout>
     </ScrollView>

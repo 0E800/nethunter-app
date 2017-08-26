@@ -18,82 +18,74 @@
         android:layout_alignBottom="@+id/runCommand" />
 
     <TextView
+        android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Exec mode:"
-        android:id="@+id/textView8"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView4"
         android:paddingLeft="@dimen/base_listItem_LR"
         android:paddingRight="@dimen/base_listItem_LR"
-        android:textColor="@color/accent_material_dark"
-        android:layout_below="@+id/textView4"
-        android:layout_alignParentStart="true" />
+        android:text="Exec mode:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
+        android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Send to:"
-        android:id="@+id/textView4"
-        android:paddingLeft="@dimen/base_listItem_LR"
-        android:layout_marginTop="-7dp"
-        android:textColor="@color/accent_material_dark"
-        android:paddingRight="@dimen/base_listItem_LR"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/command_tag"
-        android:layout_alignParentStart="true" />
+        android:layout_marginTop="-7dp"
+        android:paddingLeft="@dimen/base_listItem_LR"
+        android:paddingRight="@dimen/base_listItem_LR"
+        android:text="Send to:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/runCommand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Run"
-        android:id="@+id/runCommand"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:layout_marginRight="@dimen/base_listItem_LR"
         android:layout_marginTop="@dimen/base_listItem_LR"
-        android:textColor="#ff95ff84"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:text="Run" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="system"
         android:id="@+id/sendtocmd"
-        android:textColor="@color/accent_material_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/textView8"
-        android:layout_toEndOf="@+id/textView8" />
+        android:layout_toEndOf="@+id/textView8"
+        android:text="system" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="mode"
         android:id="@+id/execmode"
-        android:textColor="@color/accent_material_light"
-        android:layout_below="@+id/sendtocmd"
-        android:layout_toEndOf="@+id/textView8" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Run at boot:"
+        android:layout_below="@+id/sendtocmd"
+        android:layout_toEndOf="@+id/textView8"
+        android:text="mode"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
         android:id="@+id/textView9"
-        android:paddingLeft="@dimen/base_listItem_LR"
-        android:textColor="@color/accent_material_dark"
-        android:paddingRight="@dimen/base_listItem_LR"
-        android:layout_below="@+id/sendtocmd"
-        android:layout_toStartOf="@+id/custom_comands_runAtBoot_text" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="YES/NO"
+        android:layout_below="@+id/sendtocmd"
+        android:layout_toStartOf="@+id/custom_comands_runAtBoot_text"
+        android:paddingLeft="@dimen/base_listItem_LR"
+        android:paddingRight="@dimen/base_listItem_LR"
+        android:text="Run at boot:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
         android:id="@+id/custom_comands_runAtBoot_text"
-        android:textColor="@color/accent_material_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/runCommand"
         android:layout_alignTop="@+id/textView9"
-        android:layout_alignStart="@+id/runCommand" />
+        android:text="YES/NO"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
 </RelativeLayout>

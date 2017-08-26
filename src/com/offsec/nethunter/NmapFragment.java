@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,8 +24,20 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.offsec.nethunter.databinding.NmapBinding;
+import com.offsec.nethunter.ssh.PlayManaFragment;
 import com.offsec.nethunter.utils.NhPaths;
+import com.sshtools.net.SocketTransport;
+import com.sshtools.ssh.ChannelOpenException;
+import com.sshtools.ssh.PasswordAuthentication;
+import com.sshtools.ssh.PseudoTerminalModes;
+import com.sshtools.ssh.SshClient;
+import com.sshtools.ssh.SshConnector;
+import com.sshtools.ssh.SshException;
+import com.sshtools.ssh.SshSession;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class NmapFragment extends Fragment {
@@ -38,6 +51,8 @@ public class NmapFragment extends Fragment {
     private int interfacePosition = -1;
     private int timingIndex = -1;
     private int techniqueIndex = -1;
+    private SshSession session = null;
+    private boolean shellCancelled = false;
 
     public NmapFragment() {
     }
@@ -55,18 +70,6 @@ public class NmapFragment extends Fragment {
         nmapBinding = NmapBinding.inflate(inflater, container, false);
         viewModel = new NmapViewModel();
         nmapBinding.setViewModel(viewModel);
-
-        // Default advanced options as invisible
-
-        // Switch to activate open/close of advanced options
-
-        nmapBinding.nmapScanButton.setOnClickListener(
-                new View.OnClickListener() {
-                    public void onClick(View view) {
-                        getCmd();
-                    }
-                });
-
 
         // NMAP Interface Spinner
         ArrayAdapter<CharSequence> interfaceAdapter = ArrayAdapter.createFromResource(getActivity(),
@@ -103,13 +106,6 @@ public class NmapFragment extends Fragment {
             }
         });
 
-        nmapBinding.nmapScanButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                intentClickListener_NH("nmap " + getCmd());
-            }
-        });
-
 
         // NMAP Timing Spinner
         ArrayAdapter<CharSequence> timeAdapter = ArrayAdapter.createFromResource(getActivity(),
@@ -129,6 +125,90 @@ public class NmapFragment extends Fragment {
         });
 
         return nmapBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        nmapBinding.nmapScanButton.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        viewModel.scanClicked();
+                        String command = "nmap " + getCmd();
+                        startNmap(command);
+                    }
+                });
+    }
+
+    private void startNmap(String command) {
+        SshConnector con = null;
+        try {
+            con = SshConnector.createInstance();
+        } catch (SshException e) {
+            con = null;
+            e.printStackTrace();
+        }
+        SshConnector finalCon = con;
+        Thread th = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    final SshClient sshClient = finalCon.connect(new SocketTransport("localhost",
+                            22), "root", true);
+
+                    PasswordAuthentication pwd = new PasswordAuthentication();
+                    pwd.setPassword("toor");
+                    try {
+                        sshClient.authenticate(pwd);
+                    } catch (SshException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    if (sshClient.isAuthenticated()) {
+                        try {
+                            if (session == null) {
+                                session = sshClient.openSessionChannel();
+                            }
+                            PseudoTerminalModes pty = new PseudoTerminalModes(sshClient);
+                            pty.setTerminalMode(PseudoTerminalModes.ECHO, false);
+                            session.requestPseudoTerminal("vt100", 80, 24, 0, 0, pty);
+                            session.startShell();
+//                                session.setAutoConsumeInput(true);
+                            InputStreamReader is = new InputStreamReader(session.getInputStream());
+                            BufferedReader br = new BufferedReader(is);
+                            String line;
+                            session.getOutputStream().write((command + "\n").getBytes());
+//                            session.getOutputStream().flush();
+                            while ((line = br.readLine()) != null || !shellCancelled) {
+                                appendText(line);
+                            }
+
+                            br.close();
+
+                        } catch (SshException | ChannelOpenException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (IOException | SshException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        th.start();
+
+
+    }
+
+    //    called from background thread
+    private void appendText(String line) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                nmapBinding.nmapOutput.append(line);
+            }
+        }).start();
     }
 
     private String getCmd() {
@@ -184,12 +264,13 @@ public class NmapFragment extends Fragment {
                 .append(nmapBinding.nmapPingCheck.isChecked() ? " -sn" : "")
                 .append(nmapBinding.nmapTopPortsCheck.isChecked() ? " --top-ports 20" : "")
                 .append(nmapBinding.nmapUdpCheckbox.isChecked() ? " -sU" : "")
+                .append(nmapBinding.nmapOpen.isChecked() ? " --open" : "")
                 .append(nmapBinding.nmapIpv6Check.isChecked() ? " -6" : "")
                 .append(nmapBinding.nmapSVCheckbox.isChecked() ? " -sV" : "")
                 .append(nmapBinding.nmapOsonlyCheck.isChecked() ? " -O" : "")
-                .append(nmapBinding.nmapSearchbar.getText() != null ?
+                .append(!nmapBinding.nmapSearchbar.getText().toString().isEmpty() ?
                         " " + nmapBinding.nmapSearchbar.getText().toString() : "")
-                .append(nmapBinding.nmapPorts.getText() != null ?
+                .append(!nmapBinding.nmapPorts.getText().toString().isEmpty() ?
                         " -p " + nmapBinding.nmapPorts.getText().toString() : "");
 
         String command = sb.toString();
@@ -209,5 +290,10 @@ public class NmapFragment extends Fragment {
         } catch (Exception e) {
             Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 }

@@ -1,4 +1,6 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,12 +11,13 @@
             type="com.offsec.nethunter.NmapViewModel" />
     </data>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,20 +60,20 @@
             android:layout_marginTop="8dp"
             android:text="@string/advancedOptionsSwitchText"
             android:textAlignment="center"
-            android:onCheckedChanged="@{()->viewModel.advChecked()"
+            android:onClick="@{(view)->viewModel.advChecked(view)}"
             android:checked="false" />
 
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.showAdvanced ? View.VISIBLE : View.GONE}"
+            tools:visibility="gone">
 
         <LinearLayout
             android:id="@+id/nmap_adv_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:visibility="@{viewModel.showAdvanced ? View.VISIBLE : View.GONE}"
             android:orientation="vertical"
             android:weightSum="1">
 
@@ -171,9 +174,15 @@
 
             <CheckBox
                 android:id="@+id/nmap_udp_checkbox"
-                android:layout_width="109dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/nmap_udpscan" />
+
+            <CheckBox
+                android:id="@+id/nmap_open"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nmap_open" />
 
             <Space
                 android:layout_width="1dp"
@@ -181,13 +190,18 @@
 
 
         </LinearLayout>
-    </ScrollView>
+        </ScrollView>
 
-    <ExpandableListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
-
-
+        <TextView
+            android:id="@+id/nmap_output"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/black"
+            android:padding="8dp"
+            android:text="Nmap Output..."
+            android:visibility="@{viewModel.showOutput ? View.VISIBLE : View.GONE}" />
 </LinearLayout>
 </layout>

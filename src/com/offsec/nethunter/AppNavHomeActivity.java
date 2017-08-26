@@ -3,8 +3,7 @@ package com.offsec.nethunter;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,10 +11,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -28,7 +28,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,40 +36,41 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.offsec.nethunter.gps.KaliGPSUpdates;
 import com.offsec.nethunter.gps.LocationUpdateService;
 import com.offsec.nethunter.ssh.PlayManaFragment;
-import com.offsec.nethunter.utils.CheckForRoot;
+import com.offsec.nethunter.utils.CopyBootFiles;
+import com.offsec.nethunter.utils.NhPaths;
+import com.offsec.nethunter.utils.ShellExecuter;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.Stack;
 
 public class AppNavHomeActivity extends AppCompatActivity implements
-        KaliGPSUpdates.Provider, FragmentSwitcher {
+        KaliGPSUpdates.Provider, FragmentSwitcher, CopyBootFiles.FirstBootStatusListener {
 
     public final static String TAG = "AppNavHomeActivity";
     private static final String CHROOT_INSTALLED_TAG = "CHROOT_INSTALLED_TAG";
-    private static final String GPS_BACKGROUND_FRAGMENT_TAG = "BG_FRAGMENT_TAG";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private static NavigationView navigationView;
+    private NavigationView navigationView;
     private CharSequence mTitle = "NetHunter";
-    private final Stack<String> titles = new Stack<>();
-    private static SharedPreferences prefs;
+    private SharedPreferences prefs;
     private MenuItem lastSelected;
-    private Boolean weCheckedForRoot = false;
     private Integer permsCurrent = 1;
     private boolean locationUpdatesRequested = false;
     private KaliGPSUpdates.Receiver locationUpdateReceiver;
+    private NhPaths nh;
+    private ProgressDialog newAppDialog;
+    private boolean backPressWarned = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -84,8 +84,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.base_layout);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         //set kali wallpaper as background
         ActionBar ab = getSupportActionBar();
@@ -137,8 +135,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 .replace(R.id.container, NetHunterFragment.newInstance(R.id.nethunter_item))
                 .commit();
 
-        // and put the title in the queue for when you need to back through them
-        titles.push(navigationView.getMenu().getItem(0).getTitle().toString());
         // if the nav bar hasn't been seen, let's show it
         if (!prefs.getBoolean("seenNav", false)) {
             mDrawerLayout.openDrawer(GravityCompat.START);
@@ -153,28 +149,33 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         }
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout, R.string.drawer_opened, R.string.drawer_closed);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
-        mDrawerLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    setDrawerOptions();
-                }
-            }
-        });
         mDrawerToggle.syncState();
         // pre-set the drawer options
         setDrawerOptions();
 
+        nh = new NhPaths();
+
     }
 
-    public static void setDrawerOptions() {
+
+    public void setDrawerOptions() {
         Menu menuNav = navigationView.getMenu();
         if (prefs.getBoolean(CHROOT_INSTALLED_TAG, false)) {
-            menuNav.setGroupEnabled(R.id.chrootDependentGroup, true);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    menuNav.setGroupEnabled(R.id.chrootDependentGroup, true);
+                }
+            });
         } else {
-            menuNav.setGroupEnabled(R.id.chrootDependentGroup, false);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    menuNav.setGroupEnabled(R.id.chrootDependentGroup, false);
+                }
+            });
         }
     }
 
@@ -241,12 +242,9 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                         //set checked
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
-                        mTitle = menuItem.getTitle();
-                        titles.push(mTitle.toString());
                         int itemId = menuItem.getItemId();
 
                         switchFragment(itemId);
-                        restoreActionBar();
                         return true;
                     }
                 });
@@ -254,12 +252,12 @@ public class AppNavHomeActivity extends AppCompatActivity implements
 
     private void switchFragment(int itemId) {
         FragmentManager fragmentManager = getSupportFragmentManager();
+        backPressWarned = false;
         switch (itemId) {
             case R.id.nethunter_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, NetHunterFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
 
@@ -267,7 +265,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, DeAuthFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
 
@@ -275,14 +272,12 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, PlayManaFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.kaliservices_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, KaliServicesFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
 
@@ -290,7 +285,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, CustomCommandsFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
 
@@ -298,84 +292,72 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, HidFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.duckhunter_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, DuckHunterFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.badusb_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, BadusbFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.mana_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, ManaFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.macchanger_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, MacchangerFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.createchroot_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, ChrootManagerFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.mpc_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, MPCFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.mitmf_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, MITMfFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.vnc_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, VNCFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.searchsploit_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, SearchSploitFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.nmap_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, NmapFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.pineapple_item:
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, PineappleFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
 
@@ -383,7 +365,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, WardrivingFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
 
@@ -391,7 +372,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.container, KaliPreferenceFragment.newInstance(itemId))
-                        .addToBackStack(null)
                         .commit();
                 break;
 
@@ -402,48 +382,36 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         }
     }
 
-    private void restoreActionBar() {
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayShowTitleEnabled(true);
-            ab.setTitle(mTitle);
-
-        }
-    }
-
     private void CheckForRoot() {
 
         Log.d("AppNav", "Checking for Root");
-        CheckForRoot mytask = new CheckForRoot(this);
-        mytask.execute();
+        checkForRoot();
+    }
+
+    private void checkForRoot() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ShellExecuter exe = new ShellExecuter();
+                onCheckedForRoot(exe.isRootAvailable());
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (titles.size() > 1) {
-            titles.pop();
-            mTitle = titles.peek();
+        if (lastSelected.getItemId() != R.id.nethunter_item && !backPressWarned) {
+            switchFragment(R.id.nethunter_item);
+            lastSelected.setChecked(false);
+            lastSelected = null;
+            switchFragment(R.id.nethunter_item);
+        } else if (!backPressWarned) {
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            backPressWarned = true;
+        } else {
+            finish();
         }
-        Menu menuNav = navigationView.getMenu();
-        int i = 0;
-        int mSize = menuNav.size();
-        while (i < mSize) {
-            if (menuNav.getItem(i).getTitle() == mTitle) {
-                MenuItem _current = menuNav.getItem(i);
-                if (lastSelected != _current) {
-                    //remove last
-                    lastSelected.setChecked(false);
-                    // udpate for the next
-                    lastSelected = _current;
-                }
-                //set checked
-                _current.setChecked(true);
-                i = mSize;
-            }
-            i++;
-        }
-        restoreActionBar();
     }
 
     private void askMarshmallowPerms(Integer permnum) {
@@ -454,9 +422,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         1);
-            } else {
-                CheckForRoot mytask = new CheckForRoot(this);
-                mytask.execute();
             }
         }
         if (permnum == 2) {
@@ -597,16 +562,98 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onAddRemoveFragmentRequested(int prefKeyId) {
-        titles.push("Add/Remove Entries");
-        switch (prefKeyId) {
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onAddRemoveFragmentRequested(int fragmentId) {
+        switch (fragmentId) {
             case R.string.prefkey_mana_ap_ifc:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, AddRemoveListPreference.newInstance(prefKeyId))
-                        .addToBackStack(null)
+                        .replace(R.id.container, AddRemoveListPreference.newInstance(fragmentId))
                         .commit();
         }
-    
+
+    }
+
+    public void onCheckedForRoot(boolean rootEnabled) {
+        if (rootEnabled) {
+            checkForNewAppBuild();
+            setDrawerOptions();
+        } else {
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            adb.setTitle(R.string.rootdialogtitle)
+                    .setMessage(R.string.rootdialogmessage)
+                    .setPositiveButton(R.string.rootdialogposbutton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            checkForRoot();
+                        }
+                    })
+                    .setNegativeButton(R.string.rootdialognegbutton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+            AlertDialog ad = adb.create();
+            ad.setCancelable(false);
+            ad.show();
+        }
+    }
+
+    private final String COPY_ASSETS_TAG = "COPY_ASSETS_TAG";
+
+    private void checkForNewAppBuild() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss a zzz",
+                Locale.US);
+        String buildTime = sdf.format(BuildConfig.BUILD_TIME);
+
+        File sdCardDir = new File(nh.APP_SD_FILES_PATH);
+        File scriptsDir = new File(nh.APP_SCRIPTS_PATH);
+        File etcDir = new File(nh.APP_INITD_PATH);
+
+        if (!prefs.getString(COPY_ASSETS_TAG, buildTime)
+                .equals(buildTime) || !sdCardDir.isDirectory() || !scriptsDir.isDirectory() || !etcDir.isDirectory()) {
+            CopyBootFiles mytask = new CopyBootFiles(AppNavHomeActivity.this, AppNavHomeActivity.this.getAssets());
+            newAppDialog = new ProgressDialog(this);
+            newAppDialog.setTitle("New app build detected:");
+            newAppDialog.setMessage("Coping new files...");
+            newAppDialog.setCancelable(false);
+            newAppDialog.show();
+            prefs.edit()
+                    .putString(COPY_ASSETS_TAG, buildTime)
+                    .apply();
+            mytask.execute();
+        } else {
+            Log.d(COPY_ASSETS_TAG, "FILES NOT COPIED");
+        }
+
+
+    }
+
+    @Override
+    public void onChrootCheckComplete(boolean chrootInstalled) {
+        setDrawerOptions();
+    }
+
+    @Override
+    public void onStatusUpdate(String status) {
+        newAppDialog.setMessage(status);
+    }
+
+    @Override
+    public void onFirstBootComplete() {
+        newAppDialog.dismiss();
     }
 }
 

@@ -141,7 +141,7 @@ public class WardrivingMapFragment extends Fragment implements OnMapReadyCallbac
                         cursor.getColumnIndexOrThrow(WarDrivingDbContract.WifiEntry.COLUMN_NAME_LON));
 
                 if (bssids.contains(bssid)) {
-                    db.delete(WarDrivingDbContract.WifiEntry.TABLE_NAME, "WHERE " +
+                    db.delete(WarDrivingDbContract.WifiEntry.TABLE_NAME,
                             WarDrivingDbContract.WifiEntry.COLUMN_NAME_BSSID + " == ?", new String[]{bssid});
                 } else {
                     bssids.add(bssid);
