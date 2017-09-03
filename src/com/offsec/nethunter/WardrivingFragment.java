@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 
 
 public class WardrivingFragment extends Fragment {
-    private ViewPager mViewPager;
     private static final String ARG_SECTION_NUMBER = "section_number";
 
 
@@ -23,7 +22,7 @@ public class WardrivingFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.wardriving, container, false);
         TabsPagerAdapter tabsPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
 
-        mViewPager = rootView.findViewById(R.id.pagerWardriving);
+        ViewPager mViewPager = rootView.findViewById(R.id.pagerWardriving);
         mViewPager.setAdapter(tabsPagerAdapter);
 
         setHasOptionsMenu(true);
@@ -58,7 +57,7 @@ public class WardrivingFragment extends Fragment {
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new WarDrivingMainFragment();
+                    return WarDrivingMainFragment.newInstance(1001);
                 case 1:
                     return new WardrivingMapFragment();
                 default:

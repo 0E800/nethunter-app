@@ -159,7 +159,7 @@ public class CustomCommandsFragment extends Fragment {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.doDbBackup:
-                database.exportDB();
+                database.exportDB(getActivity());
                 hideSoftKeyboard(getView());
                 return true;
             case R.id.doDbRestore:
@@ -168,7 +168,7 @@ public class CustomCommandsFragment extends Fragment {
                     removeFromBoot(cc.getId());
                 }
                 //restore db
-                database.importDB();
+                database.importDB(getActivity());
                 commandList.clear();
                 // restored list
                 commandList.addAll(database.getAllCommands());

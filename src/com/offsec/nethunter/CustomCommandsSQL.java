@@ -33,10 +33,9 @@ class CustomCommandsSQL extends SQLiteOpenHelper {
             CustomCommand.EXEC_MODE + " TEXT, " +
             CustomCommand.SEND_TO_SHELL + " TEXT, " +
             CustomCommand.RUN_AT_BOOT + " INTEGER )";
-    private final Context context;
+
     CustomCommandsSQL(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
         nh = new NhPaths();
     }
 
@@ -145,7 +144,8 @@ class CustomCommandsSQL extends SQLiteOpenHelper {
         return commandList;
 
     }
-    void importDB() {
+
+    void importDB(Context context) {
         try {
             String sd = nh.SD_PATH;
             String data = nh.APP_PATH;
@@ -169,7 +169,7 @@ class CustomCommandsSQL extends SQLiteOpenHelper {
         }
     }
 
-    void exportDB() {
+    void exportDB(Context context) {
         try {
             String sd = nh.SD_PATH;
             String data = nh.APP_PATH;

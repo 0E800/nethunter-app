@@ -339,9 +339,8 @@ public class SearchSploitFragment extends Fragment {
             }
         }
     }
-}
 
-class ExploitLoader extends BaseAdapter {
+    static class ExploitLoader extends BaseAdapter {
 
     private final List<SearchSploit> _exploitList;
     private final Context _mContext;
@@ -476,5 +475,5 @@ class ExploitLoader extends BaseAdapter {
         return position;
     }
 
-
+    }
 }

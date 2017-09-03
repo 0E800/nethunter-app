@@ -172,8 +172,9 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         } else {
             runOnUiThread(new Runnable() {
                 @Override
+//                !!!!!!!!!!!!!!!!!! HACK FOR DEV APP UPDATES !!!!!!!!!!!!11
                 public void run() {
-                    menuNav.setGroupEnabled(R.id.chrootDependentGroup, false);
+                    menuNav.setGroupEnabled(R.id.chrootDependentGroup, true);
                 }
             });
         }
@@ -400,8 +401,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (lastSelected.getItemId() != R.id.nethunter_item && !backPressWarned) {
+        if (lastSelected != null && lastSelected.getItemId() != R.id.nethunter_item && !backPressWarned) {
             switchFragment(R.id.nethunter_item);
             lastSelected.setChecked(false);
             lastSelected = null;
