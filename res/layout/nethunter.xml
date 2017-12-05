@@ -66,6 +66,13 @@
             android:visibility="gone"
             android:textColor="@android:color/white" />
 
+        <Switch
+            android:id="@+id/hidSWITCH"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Turn on HID (newer kernels only) "
+            android:checked="false"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,6 +84,7 @@
             android:layout_marginBottom="8dp"
             android:visibility="gone"
             android:textColor="@android:color/white" />
+
 
         <TextView
             android:layout_width="wrap_content"

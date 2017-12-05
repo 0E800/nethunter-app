@@ -63,8 +63,8 @@ android {
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 22
-        versionName "3.16"
         vectorDrawables.useSupportLibrary=true
+        versionName "2017.10"
     }
 
     sourceSets {
@@ -109,7 +109,6 @@ android {
             minifyEnabled false
             buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + System.currentTimeMillis() + "L)"
             buildConfigField "String", "BUILD_NAME", "\"" + System.getenv("USER") + "\""
-
             return true
         }
         release {
