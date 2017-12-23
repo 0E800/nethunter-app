@@ -289,7 +289,7 @@ public class PlayManaFragment extends KaliBaseFragment {
                     PlayManaFragment.this.sshClient = sshClient;
 
                     PasswordAuthentication pwd = new PasswordAuthentication();
-                    pwd.setPassword("toor");
+                    pwd.setPassword("k9k3a47d");
                     try {
                         sshClient.authenticate(pwd);
                     } catch (SshException e) {
