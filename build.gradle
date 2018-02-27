@@ -20,6 +20,7 @@ repositories {
     maven {
         url "https://maven.google.com"
     }
+    google()
 }
 
 allprojects {
@@ -64,7 +65,7 @@ android {
         targetSdkVersion 27
         versionCode 22
         vectorDrawables.useSupportLibrary=true
-        versionName "2017.10"
+        versionName "2018.01.01"
     }
 
     sourceSets {
@@ -120,8 +121,10 @@ android {
             jniDebuggable false
             zipAlignEnabled true
             buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + System.currentTimeMillis() + "L)"
-            buildConfigField "String", "BUILD_NAME", "\"" + System.getenv("USER") + "\""
-
+            /*  enable below to set "built by" name to build machine name
+                buildConfigField "String", "BUILD_NAME", "\"" + System.getenv("USER") + "\""
+                or change line below to hard code it.  */
+            buildConfigField "String", "BUILD_NAME", "\"Kali\""
             return true
         }
     }
