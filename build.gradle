@@ -30,16 +30,16 @@ allprojects {
 
 
 dependencies {
-    implementation 'com.android.support:support-v4:27.0.2'
-    implementation 'com.android.support:appcompat-v7:27.0.2'
-    implementation 'com.android.support:design:27.0.2'
+    implementation 'com.android.support:support-v4:27.1.0'
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support:design:27.1.0'
     api project(':androidwversionmanager')
     implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
-    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:12.0.0'
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'com.google.guava:guava:23.5-android'
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
-    implementation 'com.android.support:preference-v14:27.0.2'
+    implementation 'com.google.android.gms:play-services-maps:12.0.0'
+    implementation 'com.android.support:preference-v14:27.1.0'
     implementation 'com.sshtools:j2ssh-maverick:1.5.5'
 }
 
@@ -61,7 +61,7 @@ android {
         targetSdkVersion 27
         versionCode 22
         vectorDrawables.useSupportLibrary=true
-
+        multiDexEnabled true
 
         versionName "2018.01.01"
     }
