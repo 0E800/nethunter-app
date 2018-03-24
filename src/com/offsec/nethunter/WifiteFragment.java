@@ -70,11 +70,11 @@ public class WifiteFragment extends KaliBaseFragment {
                         InputStreamReader is = new InputStreamReader(session.getInputStream());
                         BufferedReader br = new BufferedReader(is);
                         String line;
-                        session.getOutputStream().write((command + "\n").getBytes());
+//                        session.getOutputStream().write((command + "\n").getBytes());
 //                            session.getOutputStream().flush();
-                        while ((line = br.readLine()) != null || !shellCancelled) {
-                            processShellOutput(line);
-                        }
+//                        while ((line = br.readLine()) != null || !shellCancelled) {
+//                            processShellOutput(line);
+//                        }
 
                         br.close();
                     }
