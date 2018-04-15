@@ -1,10 +1,5 @@
 # Built application files
 *.apk
-*.ap_
-# Files for the Dalvik VM
-*.dex
-# Java class files
-*.class
 # Generated files
 bin/
 gen/
@@ -37,13 +32,11 @@ tmp/**/*
 .idea/
 
 .DS_Store
-/build
 # External tool builders
 .externalToolBuilders/
 
 # Locally stored "Eclipse launch configurations"
 *.launch
-nethunter-app.iml
 # CDT-specific
 .cproject
 
@@ -51,6 +44,9 @@ nethunter-app.iml
 .buildpath
 /lint.xml
 libsuperuser-release/libsuperuser-release.iml
-androidwversionmanager/androidwversionmanager.iml
 *.iml
 /release
+
+# API Keys, etc.
+/res/values/secrets.xml
+/signing.properties

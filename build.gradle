@@ -91,16 +91,17 @@ android {
             storeFile file("${System.properties['user.home']}" +  "/.android/release.keystore")
             keyAlias "nethunter"
 
-
         }
         */
-        config {
-        }
+
+        /* Alternately, you can setup gradle.properties file and read in the values. This was done
+        below, with gradle.properties located in your ~/.gradle/ directory
+        * */
         release {
-            keyAlias 'release-key'
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            storeFile file('/home/ilak/android-keystore/keystore.jks')
-            keyPassword System.getenv("KEY_PASSWORD")
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
         }
     }
 
@@ -113,7 +114,7 @@ android {
             return true
         }
         release {
-            //signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt')
