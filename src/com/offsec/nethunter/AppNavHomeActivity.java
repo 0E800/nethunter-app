@@ -78,6 +78,8 @@ public class AppNavHomeActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        prefs = getSharedPreferences("com.offsec.nethunter", Context.MODE_PRIVATE);
+
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             askMarshmallowPerms(permsCurrent);
@@ -86,8 +88,8 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         }
 
 //        Hack to get files copied over
-        CopyBootFiles mytask = new CopyBootFiles(AppNavHomeActivity.this, AppNavHomeActivity.this.getAssets());
-        mytask.execute();
+//        CopyBootFiles mytask = new CopyBootFiles(AppNavHomeActivity.this, AppNavHomeActivity.this.getAssets());
+//        mytask.execute();
 
         setContentView(R.layout.base_layout);
 
@@ -116,8 +118,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         /// moved build info to the menu
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss a zzz",
                 Locale.US);
-
-        prefs = getSharedPreferences("com.offsec.nethunter", Context.MODE_PRIVATE);
 
         final String buildTime = sdf.format(BuildConfig.BUILD_TIME);
         TextView buildInfo1 = navigationHeadView.findViewById(R.id.buildinfo1);

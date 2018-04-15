@@ -132,11 +132,11 @@ public class RunAtBootService extends JobIntentService {
         }
 
         if (userinit(runBootServices)) {
-            Toast.makeText(getBaseContext(), "Boot end: ALL OK", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(), "Boot end: ALL OK", Toast.LENGTH_SHORT).show();
             doNotification("Boot ended. All fine. Action performed: " + doing_action + " OK");
         } else {
             if (!runBootServices) {
-                Toast.makeText(getBaseContext(), "Not runing boot scripts. OK", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getBaseContext(), "Not runing boot scripts. OK", Toast.LENGTH_SHORT).show();
                 doNotification("Boot ended. All fine. Action performed: " + doing_action + " OK");
             } else {
                 doNotification("Boot ended. No busybox found!");
@@ -162,7 +162,7 @@ public class RunAtBootService extends JobIntentService {
             // init.d
             String[] runner = {busybox + " run-parts " + nh.APP_INITD_PATH};
             exe.RunAsRoot(runner);
-            Toast.makeText(getBaseContext(), getString(R.string.autorunningscripts), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(), getString(R.string.autorunningscripts), Toast.LENGTH_SHORT).show();
             return true;
         }
         Toast.makeText(getBaseContext(), getString(R.string.toastForNoBusybox), Toast.LENGTH_SHORT).show();
