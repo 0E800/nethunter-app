@@ -10,7 +10,8 @@ public class BootCompletedReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Intent startServiceIntent = new Intent(context, RunAtBootService.class);
-            context.startService(startServiceIntent);
+            if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+                RunAtBootService.enqueueWork(context, new Intent());
+            }
         }
 }

@@ -47,7 +47,6 @@ public class MPCFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.payload_maker, container, false);
-        SharedPreferences sharedpreferences = getActivity().getSharedPreferences("com.offsec.nethunter", Context.MODE_PRIVATE);
         Context mContext = getActivity().getApplicationContext();
 
 

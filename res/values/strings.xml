@@ -285,7 +285,7 @@
         <item>HTTPS</item>
         <item>Find Port</item>
     </string-array>
-    <string name="mpc_generateSDCARD">Generate to SDCARD</string>
+    <string name="mpc_generateSDCARD">Generate to SD</string>
     <string name="mpc_generateHTTP">Generate to HTTP</string>
 
     <!-- SearchSploit -->
@@ -404,6 +404,15 @@
     <string name="username_optional">Username (optional)</string>
     <string name="resolution">Resolution</string>
     <string name="open_connection">Open Connection</string>
+    <string name="mana_edit_files_title">Edit Mana Files</string>
+    <string name="dhcpd_conf">DHCPD Configuration</string>
+    <string name="dnsspoof_conf">DNSSpoof Configuration</string>
+    <string name="nat_full_script">NAT-Full Script</string>
+    <string name="nat_simple_script">NAT-Simple Script</string>
+    <string name="nat_bettercap_script">NAT-Bettercap Script</string>
+    <string name="bdfproxy_configuration">BDFProxy Configuration</string>
+    <string name="boot_notification_channel">Boot</string>
+    <string name="boot_notification_channel_description">Indication for services that initialize at boot</string>
     <!-- End GPSFragment -->
 
 

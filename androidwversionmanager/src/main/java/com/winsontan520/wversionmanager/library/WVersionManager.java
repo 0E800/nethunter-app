@@ -58,7 +58,6 @@ public class WVersionManager implements IWVersionManager {
     private String mAskForRatePositiveLabel;
     private String mAskForRateNegativeLabel;
     private int mMode = 100; // default mode
-    private OnReceiveListener mOnReceiveListener;
 
     public WVersionManager(Activity act) {
         this.activity = act;
@@ -469,9 +468,6 @@ public class WVersionManager implements IWVersionManager {
             String content;
             if (statusCode != HttpStatus.SC_OK) {
                 Log.e(TAG, "Response invalid. status code = " + statusCode);
-                if (mOnReceiveListener != null) {
-                    mOnReceiveListener.onReceive(statusCode, result);
-                }
             } else {
                 try {
                     if (!result.startsWith("{")) { // for response who append
@@ -485,7 +481,6 @@ public class WVersionManager implements IWVersionManager {
                     }
 
                     // show default dialog if no listener is set OR return true
-                    if (mOnReceiveListener == null || mOnReceiveListener.onReceive(statusCode, result)) {
                         // json format from server:
                         JSONObject json = (JSONObject) new JSONTokener(mResult).nextValue();
                         mVersionCode = json.optInt("version_code");
@@ -505,7 +500,6 @@ public class WVersionManager implements IWVersionManager {
                         } else if (currentVersionCode >= mVersionCode) {
                             Toast.makeText(activity, "You are on the latest version of Nethunter", Toast.LENGTH_LONG).show();
                         }
-                    }
                 } catch (JSONException e) {
                     Log.e(TAG, "is your server response have valid json format?");
                 } catch (Exception e) {
@@ -545,29 +539,8 @@ public class WVersionManager implements IWVersionManager {
         return customTagHandler;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.winsontan520.wversionmanagertest.IWVersionManager#setCustomTagHandler
-     * (com.winsontan520.wversionmanagertest.WVersionManager.CustomTagHandler)
-     */
-    @Override
-    public void setCustomTagHandler(CustomTagHandler customTagHandler) {
-        this.customTagHandler = customTagHandler;
-    }
-
     private boolean isDialogCancelable() {
         return mDialogCancelable;
-    }
-
-    public void setDialogCancelable(boolean dialogCancelable) {
-        mDialogCancelable = dialogCancelable;
-    }
-
-    public void askForRate() {
-        mMode = MODE_ASK_FOR_RATE;
-        showDialog();
     }
 
     private String getAskForRatePositiveLabel() {
@@ -584,11 +557,6 @@ public class WVersionManager implements IWVersionManager {
 
     public void setAskForRateNegativeLabel(String askForRateNegativeLabel) {
         mAskForRateNegativeLabel = askForRateNegativeLabel;
-    }
-
-    @Override
-    public void setOnReceiveListener(OnReceiveListener listener) {
-        this.mOnReceiveListener = listener;
     }
 
 }

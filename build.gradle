@@ -5,7 +5,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.1'
     }
 }
 
@@ -30,22 +30,21 @@ allprojects {
 
 
 dependencies {
-    implementation 'com.android.support:support-v4:27.1.0'
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
-    api project(':androidwversionmanager')
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
     implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
-    implementation 'com.google.android.gms:play-services-location:12.0.0'
+    implementation 'com.google.android.gms:play-services-location:15.0.0'
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'com.google.guava:guava:23.5-android'
-    implementation 'com.google.android.gms:play-services-maps:12.0.0'
-    implementation 'com.android.support:preference-v14:27.1.0'
+    implementation 'com.google.android.gms:play-services-maps:15.0.0'
+    implementation 'com.android.support:preference-v14:27.1.1'
     implementation 'com.sshtools:j2ssh-maverick:1.5.5'
 }
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28-rc1'
 
     dataBinding {
         enabled = true
@@ -57,7 +56,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 27
+        minSdkVersion 26
         targetSdkVersion 27
         versionCode 22
         vectorDrawables.useSupportLibrary=true
@@ -79,11 +78,6 @@ android {
     }
 
     signingConfigs {
-
-        debug {
-            storeFile file("${System.properties['user.home']}" + "/.android/debug.keystore")
-        }
-
         /* note:  To build a signed version of nethunter:
         1. Put your keystore in ~/.android/release-keystore and set up a key "nethunter"
         2. set KEYSTORE_PASSWORD and KEY_PASSWORD environment variables before running gradle.  this
@@ -93,13 +87,21 @@ android {
            point to it directly.
 
         release {
-            storePassword System.getenv("KEYSTORE_PASSWORD")
+
             storeFile file("${System.properties['user.home']}" +  "/.android/release.keystore")
             keyAlias "nethunter"
-            keyPassword System.getenv("KEY_PASSWORD")
+
 
         }
         */
+        config {
+        }
+        release {
+            keyAlias 'release-key'
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            storeFile file('/home/ilak/android-keystore/keystore.jks')
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
     }
 
     buildTypes {

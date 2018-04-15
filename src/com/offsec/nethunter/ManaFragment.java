@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -274,6 +276,15 @@ public class ManaFragment extends KaliBaseFragment {
         }
     } //end class
 
+    public static class ManaEditFragment extends Fragment {
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.mana_edit_file, container, false);
+            return rootView;
+        }
+    }
 
     public static class HostapdFragment extends Fragment {
 
@@ -285,7 +296,7 @@ public class ManaFragment extends KaliBaseFragment {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.mana_hostapd, container, false);
-            Button button = (Button) rootView.findViewById(R.id.updateButton);
+            Button button = rootView.findViewById(R.id.updateButton);
             loadOptions(rootView);
 
 
@@ -347,13 +358,13 @@ public class ManaFragment extends KaliBaseFragment {
         public void loadOptions(View rootView) {
 
 
-            final AppCompatAutoCompleteTextView ifc = (AppCompatAutoCompleteTextView)
+            final AppCompatAutoCompleteTextView ifc =
                     rootView.findViewById(R.id.autocomplete_interface);
-            final EditText bssid = (EditText) rootView.findViewById(R.id.bssid);
-            final EditText ssid = (EditText) rootView.findViewById(R.id.ssid);
-            final EditText channel = (EditText) rootView.findViewById(R.id.channel);
-            final EditText enableKarma = (EditText) rootView.findViewById(R.id.enable_karma);
-            final EditText karmaLoud = (EditText) rootView.findViewById(R.id.karma_loud);
+            final EditText bssid = rootView.findViewById(R.id.bssid);
+            final EditText ssid = rootView.findViewById(R.id.ssid);
+            final EditText channel = rootView.findViewById(R.id.channel);
+            final EditText enableKarma = rootView.findViewById(R.id.enable_karma);
+            final EditText karmaLoud = rootView.findViewById(R.id.karma_loud);
 
             new Thread(new Runnable() {
                 public void run() {
@@ -666,17 +677,17 @@ public class ManaFragment extends KaliBaseFragment {
             }
 
 
-            EditText source = (EditText) rootView.findViewById(R.id.source);
+            EditText source = rootView.findViewById(R.id.source);
             ShellExecuter exe = new ShellExecuter();
             exe.ReadFile_ASYNC(configFilePath, source);
-            Button button = (Button) rootView.findViewById(R.id.update);
+            Button button = rootView.findViewById(R.id.update);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (getView() == null) {
                         return;
                     }
-                    EditText source = (EditText) getView().findViewById(R.id.source);
+                    EditText source = getView().findViewById(R.id.source);
                     String newSource = source.getText().toString();
                     ShellExecuter exe = new ShellExecuter();
                     exe.SaveFileContents(newSource, configFilePath);

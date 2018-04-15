@@ -3,6 +3,8 @@ package com.offsec.nethunter;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,7 +46,6 @@ import com.offsec.nethunter.ssh.PlayManaFragment;
 import com.offsec.nethunter.utils.CopyBootFiles;
 import com.offsec.nethunter.utils.NhPaths;
 import com.offsec.nethunter.utils.ShellExecuter;
-import com.winsontan520.wversionmanager.library.WVersionManager;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -55,6 +56,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements
 
     public final static String TAG = "AppNavHomeActivity";
     private static final String CHROOT_INSTALLED_TAG = "CHROOT_INSTALLED_TAG";
+    public static final String BOOT_CHANNEL_ID = "BOOT_CHANNEL";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -80,8 +82,12 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             askMarshmallowPerms(permsCurrent);
         } else {
-            CheckForRoot();
+            checkForRoot();
         }
+
+//        Hack to get files copied over
+        CopyBootFiles mytask = new CopyBootFiles(AppNavHomeActivity.this, AppNavHomeActivity.this.getAssets());
+        mytask.execute();
 
         setContentView(R.layout.base_layout);
 
@@ -156,6 +162,23 @@ public class AppNavHomeActivity extends AppCompatActivity implements
 
         nh = new NhPaths();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create the NotificationChannel
+            CharSequence name = getString(R.string.boot_notification_channel);
+            String description = getString(R.string.boot_notification_channel_description);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel mChannel = new NotificationChannel(BOOT_CHANNEL_ID, name, importance);
+            mChannel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(mChannel);
+            }
+        }
+
+
     }
 
 
@@ -177,15 +200,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 }
             });
         }
-    }
-
-    private void checkUpdate() {
-        WVersionManager versionManager = new WVersionManager(this);
-        versionManager.setVersionContentUrl("https://images.offensive-security.com/version.txt");
-        versionManager.setUpdateUrl("https://images.offensive-security.com/latest.apk");
-        versionManager.checkVersion();
-        versionManager.setUpdateNowLabel("Update");
-        versionManager.setIgnoreThisVersionLabel("Ignore");
     }
 
     private void showLicense() {
@@ -375,20 +389,11 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                         .commit();
                 break;
 
-            case R.id.checkforupdate_item:
-                checkUpdate();
-                break;
-
         }
     }
 
-    private void CheckForRoot() {
-
-        Log.d("AppNav", "Checking for Root");
-        checkForRoot();
-    }
-
     private void checkForRoot() {
+        Log.d("AppNav", "Checking for Root");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -489,10 +494,10 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         8);
             }
-            // Add CheckForRoot after last permission check.  Sometimes files don't copy over on first run
+            // Add checkForRoot after last permission check.  Sometimes files don't copy over on first run
             // so we need to force it to check.  Doing it earlier runs risk of no permission and SuperSU
             // display conflicting with permission requests
-            CheckForRoot();
+            checkForRoot();
         }
     }
 
@@ -506,7 +511,7 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 askMarshmallowPerms(permsCurrent);
             } else {
                 Log.d("AppNav", "Permissions granted");
-                CheckForRoot();
+                checkForRoot();
             }
         } else {
             Log.d("AppNav", "Not granted permission");
@@ -647,12 +652,16 @@ public class AppNavHomeActivity extends AppCompatActivity implements
 
     @Override
     public void onStatusUpdate(String status) {
-        newAppDialog.setMessage(status);
+        if (newAppDialog!= null) {
+            newAppDialog.setMessage(status);
+        }
     }
 
     @Override
     public void onFirstBootComplete() {
-        newAppDialog.dismiss();
+        if (newAppDialog != null) {
+            newAppDialog.dismiss();
+        }
     }
 }
 
