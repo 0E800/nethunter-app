@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -59,7 +60,7 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.wardriving_gps, container, false);
 
 
@@ -215,22 +216,31 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
         event = parser.next();
         while (event != XmlPullParser.END_DOCUMENT) {
             if (event == XmlPullParser.START_TAG) {
-                if (parser.getName().equals("essid")) {
-                    network.ssid = parser.nextText();
-                } else if (parser.getName().equals("BSSID")) {
-                    network.bssid = parser.nextText();
-                } else if (parser.getName().equals("min-lat")) {
-                    network.minLat = Double.parseDouble(parser.nextText());
-                } else if (parser.getName().equals("min-lon")) {
-                    network.minLon = Double.parseDouble(parser.nextText());
-                } else if (parser.getName().equals("max-lat")) {
-                    network.maxLat = Double.parseDouble(parser.nextText());
-                } else if (parser.getName().equals("max-lon")) {
-                    network.maxLon = Double.parseDouble(parser.nextText());
-                } else if (parser.getName().equals("avg-lat")) {
-                    network.lat = Double.parseDouble(parser.nextText());
-                } else if (parser.getName().equals("avg-lon")) {
-                    network.lon = Double.parseDouble(parser.nextText());
+                switch (parser.getName()) {
+                    case "essid":
+                        network.ssid = parser.nextText();
+                        break;
+                    case "BSSID":
+                        network.bssid = parser.nextText();
+                        break;
+                    case "min-lat":
+                        network.minLat = Double.parseDouble(parser.nextText());
+                        break;
+                    case "min-lon":
+                        network.minLon = Double.parseDouble(parser.nextText());
+                        break;
+                    case "max-lat":
+                        network.maxLat = Double.parseDouble(parser.nextText());
+                        break;
+                    case "max-lon":
+                        network.maxLon = Double.parseDouble(parser.nextText());
+                        break;
+                    case "avg-lat":
+                        network.lat = Double.parseDouble(parser.nextText());
+                        break;
+                    case "avg-lon":
+                        network.lon = Double.parseDouble(parser.nextText());
+                        break;
                 }
             } else if (event == XmlPullParser.END_TAG &&
                     parser.getName().equals("wireless-network")) {
@@ -242,9 +252,9 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        gpsTextView = (TextView) view.findViewById(R.id.gps_textview);
+        gpsTextView = view.findViewById(R.id.gps_textview);
     }
 
     private void addClickListener(int buttonId, View.OnClickListener onClickListener, View rootView) {
@@ -282,7 +292,7 @@ public class WarDrivingMainFragment extends Fragment implements KaliGPSUpdates.R
             intent.putExtra("com.offsec.nhterm.iInitialCommand", "/usr/bin/start-kismet");
             startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
         }
     }
 

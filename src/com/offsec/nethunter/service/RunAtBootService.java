@@ -1,12 +1,9 @@
 package com.offsec.nethunter.service;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
@@ -161,7 +158,7 @@ public class RunAtBootService extends JobIntentService {
             exe.RunAsRootOutput("rm -rf " + nh.CHROOT_PATH + "/tmp/.X1*"); // remove posible vnc locks (if the phone is rebooted with the vnc server running)
             // init.d
             String[] runner = {busybox + " run-parts " + nh.APP_INITD_PATH};
-            exe.RunAsRoot(runner);
+            exe.runAsRoot(runner);
 //            Toast.makeText(getBaseContext(), getString(R.string.autorunningscripts), Toast.LENGTH_SHORT).show();
             return true;
         }

@@ -637,7 +637,7 @@ public class ChrootManagerFragment extends Fragment {
 
     private void doLog(String data, String fileName) {
         String[] appendToFile = {"echo '" + data + "' >> '" + fileName + "'"};
-        x.RunAsRoot(appendToFile);
+        x.runAsRoot(appendToFile);
     }
 
     private void statusLog(final String status) {

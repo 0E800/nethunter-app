@@ -205,7 +205,7 @@ public class HidFragment extends Fragment {
         new Thread(new Runnable() {
             public void run() {
                 ShellExecuter exe = new ShellExecuter();
-                exe.RunAsRoot(command);
+                exe.runAsRoot(command);
                 //Logger.appendLog(outp1);
                 mViewPager.post(new Runnable() {
                     @Override
@@ -222,7 +222,7 @@ public class HidFragment extends Fragment {
     private void reset() {
         ShellExecuter exe = new ShellExecuter();
         String[] command = {"stop-badusb"};
-        exe.RunAsRoot(command);
+        exe.runAsRoot(command);
         nh.showMessage("Reseting USB", getActivity());
     }
 

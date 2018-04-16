@@ -1,54 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Theme.Nethunter"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="ServiceName"
-        android:id="@+id/switchTitle"
-        android:paddingLeft="@dimen/base_listItem_LR"
-        android:paddingRight="@dimen/base_listItem_LR"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/initAtBoot"
-        android:gravity="center_vertical" />
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/switch1"
-        android:textColor="@color/clearTitle"
-        android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingRight="@dimen/base_listItem_LR"
-        android:paddingBottom="@dimen/base_listItem_TB"
-        android:textOn="UP"
-        android:textOff="DOWN"
-        android:layout_marginTop="45dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
 
     <TextView
+        android:id="@+id/switchTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/loading_service"
-        android:id="@+id/switchHolder"
+        android:layout_above="@+id/initAtBoot"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
         android:paddingLeft="@dimen/base_listItem_LR"
         android:paddingRight="@dimen/base_listItem_LR"
+        android:text="ServiceName"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="45dp"
         android:paddingBottom="@dimen/base_listItem_TB"
+        android:paddingEnd="@dimen/base_listItem_LR"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/clearTitle"
+        android:textOff="@string/service_status_switch_down"
+        android:textOn="@string/service_status_switch_up"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/switchHolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/switch1"
-        android:layout_alignParentEnd="true" />
+        android:paddingBottom="@dimen/base_listItem_TB"
+        android:paddingLeft="@dimen/base_listItem_LR"
+        android:paddingRight="@dimen/base_listItem_LR"
+        android:text="@string/loading_service"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
     <CheckBox
+        android:id="@+id/initAtBoot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start at boot."
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="@dimen/base_listItem_LR"
-        android:id="@+id/initAtBoot"
-        android:checked="false"
+        android:layout_alignParentStart="true"
         android:layout_alignTop="@+id/switch1"
-        android:layout_alignParentStart="true" />
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="@dimen/base_listItem_LR"
+        android:checked="false"
+        android:text="@string/service_start_at_boot" />
 </RelativeLayout>

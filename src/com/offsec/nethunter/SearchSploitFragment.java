@@ -382,7 +382,7 @@ public class SearchSploitFragment extends Fragment {
         String test = "su -c /data/data/com.offsec.nethunter/files/scripts/bootkali file2hid-file " + file;
         Log.d("Exe:", test);
         ShellExecuter exe = new ShellExecuter();
-        exe.RunAsRoot(command);
+        exe.runAsRoot(command);
     }
 
     // getView method is called for each item of ListView

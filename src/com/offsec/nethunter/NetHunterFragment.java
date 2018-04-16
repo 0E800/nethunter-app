@@ -2,24 +2,19 @@ package com.offsec.nethunter;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.offsec.nethunter.utils.NhPaths;
 import com.offsec.nethunter.utils.ShellExecuter;
@@ -64,10 +59,10 @@ public class NetHunterFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.nethunter, container, false);
-        TextView ip = (TextView) rootView.findViewById(R.id.editText2);
+        TextView ip = rootView.findViewById(R.id.editText2);
         ip.setFocusable(false);
         addClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -77,7 +72,7 @@ public class NetHunterFragment extends Fragment {
         getInterfaces(rootView);
 
         // HID Switch for newer kernels to turn on HID
-        HIDSwitch = (Switch) rootView.findViewById(R.id.hidSWITCH);
+        HIDSwitch = rootView.findViewById(R.id.hidSWITCH);
         HIDSwitch.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -187,15 +182,15 @@ public class NetHunterFragment extends Fragment {
                 String busybox_ver = nh.whichBusybox();
 
                 ShellExecuter exe = new ShellExecuter();
-                String commandNET[] = {"sh", "-c", "ip -o addr show | busybox awk '/inet/ {print $2, $3, $4}'"};
+                String commandNET[] = {"/system/bin/ip -o addr show | busybox awk '/inet/ {print $2, $3, $4}'"};
                 String commandHID[] = {"sh", "-c", "ls /dev/hidg*"};
                 String commandBUSYBOX[] = {"sh", "-c", busybox_ver + " | " + busybox_ver + " head -1 | " + busybox_ver + " awk '{print $2}'"};
                 String commandKERNELVER[] = {"sh", "-c", "cat /proc/version"};
 
-                final String outputNET = exe.Executer(commandNET);
-                final String outputHID = exe.Executer(commandHID);
-                final String outputBUSYBOX = exe.Executer(commandBUSYBOX);
-                final String outputKERNELVER = exe.Executer(commandKERNELVER);
+                final String outputNET = exe.executeCommand(commandNET);
+                final String outputHID = exe.executeCommand(commandHID);
+                final String outputBUSYBOX = exe.executeCommand(commandBUSYBOX);
+                final String outputKERNELVER = exe.executeCommand(commandKERNELVER);
 
                 final String[] netArray = outputNET.split("\n");
                 final String[] hidArray = outputHID.split("\n");

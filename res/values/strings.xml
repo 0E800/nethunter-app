@@ -413,6 +413,10 @@
     <string name="bdfproxy_configuration">BDFProxy Configuration</string>
     <string name="boot_notification_channel">Boot</string>
     <string name="boot_notification_channel_description">Indication for services that initialize at boot</string>
+    <string name="service_status_switch_down">DOWN</string>
+    <string name="service_status_switch_up">UP</string>
+    <string name="service_start_at_boot">Start at boot</string>
+    <string name="home_turn_on_hid">Turn on HID (newer kernels only)</string>
     <!-- End GPSFragment -->
 
 

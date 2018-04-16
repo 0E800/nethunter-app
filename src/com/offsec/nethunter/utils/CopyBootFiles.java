@@ -47,7 +47,7 @@ public class CopyBootFiles extends AsyncTask<String, String, Void> {
 
         publishProgress("Fixing permissions for new files");
         ShellExecuter exe = new ShellExecuter();
-        exe.RunAsRoot(new String[]{"chmod 700 " + nh.APP_SCRIPTS_PATH + "/*", "chmod 700 " + nh.APP_INITD_PATH + "/*"});
+        exe.runAsRoot(new String[]{"chmod 700 " + nh.APP_SCRIPTS_PATH + "/*", "chmod 700 " + nh.APP_INITD_PATH + "/*"});
 
         publishProgress("Checking for SYMLINKS to bootkali....");
         try {
@@ -207,13 +207,13 @@ public class CopyBootFiles extends AsyncTask<String, String, Void> {
     private void MakeSYSWriteable() {
         ShellExecuter exe = new ShellExecuter();
         Log.d(TAG, "Making /system writeable for symlink");
-        exe.RunAsRoot(new String[]{"mount -o rw,remount,rw /system"});
+        exe.runAsRoot(new String[]{"mount -o rw,remount,rw /system"});
     }
 
     private void MakeSYSReadOnly() {
         ShellExecuter exe = new ShellExecuter();
         Log.d(TAG, "Making /system readonly for symlink");
-        exe.RunAsRoot(new String[]{"mount -o ro,remount,ro /system"});
+        exe.runAsRoot(new String[]{"mount -o ro,remount,ro /system"});
     }
 
     private void NotFound(String filename) {
@@ -221,7 +221,7 @@ public class CopyBootFiles extends AsyncTask<String, String, Void> {
         Log.d(TAG, "Symlinking " + filename);
         Log.d(TAG, "command output: ln -s " + nh.APP_SCRIPTS_PATH + "/" + filename + " /system/bin/" + filename);
 
-        exe.RunAsRoot(new String[]{"ln -s " + nh.APP_SCRIPTS_PATH + "/" + filename + " /system/bin/" + filename});
+        exe.runAsRoot(new String[]{"ln -s " + nh.APP_SCRIPTS_PATH + "/" + filename + " /system/bin/" + filename});
     }
 
 

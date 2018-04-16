@@ -18,7 +18,7 @@ public class ShellExecuter {
 
     }
 
-    public String Executer(String command) {
+    public String executeCommand(String command) {
         StringBuilder output = new StringBuilder();
         Process p;
         try {
@@ -35,7 +35,7 @@ public class ShellExecuter {
         return output.toString();
     }
 
-    public String Executer(String command[]) {
+    public String executeCommand(String command[]) {
         StringBuilder output = new StringBuilder();
         Process p;
         try {
@@ -52,7 +52,7 @@ public class ShellExecuter {
         return output.toString();
     }
 
-    public void RunAsRoot(String[] command) {
+    public void runAsRoot(String[] command) {
         try {
             Process process = Runtime.getRuntime().exec("su");
             DataOutputStream os = new DataOutputStream(process.getOutputStream());

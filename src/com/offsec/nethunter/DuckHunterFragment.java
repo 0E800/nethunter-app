@@ -213,7 +213,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
             command[0] = "su -c '" + nh.APP_SCRIPTS_PATH + "/bootkali duck-hunt-convert " + lang +
                     " /sdcard/nh_files/modules/duckconvert.txt " + "/opt/" +
                     DuckHunterPreviewFragment.configFileFilename + "'";
-            exe.RunAsRoot(command);
+            exe.runAsRoot(command);
         }
     }
 
@@ -223,7 +223,7 @@ public class DuckHunterFragment extends Fragment implements ActionBar.TabListene
         String command_string = "su -c '" + nh.APP_SCRIPTS_PATH + "/bootkali duck-hunt-run /opt/duckout.sh'";
         Log.d(TAG, command_string);
         ShellExecuter exe = new ShellExecuter();
-        exe.RunAsRoot(command);
+        exe.runAsRoot(command);
     }
 
     private void openLanguageDialog() {

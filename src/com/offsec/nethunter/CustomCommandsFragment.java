@@ -134,7 +134,7 @@ public class CustomCommandsFragment extends Fragment {
         }
         String bootServiceFile = bootScriptPath + "/" + custom_commands_runlevel + "_" + command.getId() + "_custom_command";
         String fileContents = shebang + _label + "\n" + composedCommand;
-        exe.RunAsRoot(new String[]{
+        exe.runAsRoot(new String[]{
                 "echo '" + fileContents + "' > " + bootServiceFile,
                 "chmod 700 " + bootServiceFile
         });
@@ -146,7 +146,7 @@ public class CustomCommandsFragment extends Fragment {
     private void removeFromBoot(long commandId) {
         // return the number of services
         String bootServiceFile = bootScriptPath + "/" + custom_commands_runlevel + "_" + commandId + "_custom_command";
-        exe.RunAsRoot(new String[]{"rm -rf " + bootServiceFile});
+        exe.runAsRoot(new String[]{"rm -rf " + bootServiceFile});
     }
 
     @Override
@@ -514,7 +514,7 @@ class CmdLoader extends BaseAdapter {
                         Toast.LENGTH_SHORT).show();
             } else {
                 // dont run all the bg commands as root
-                exe.Executer(_cmd);
+                exe.executeCommand(_cmd);
                 Toast.makeText(_mContext,
                         "Android cmd done.",
                         Toast.LENGTH_SHORT).show();

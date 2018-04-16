@@ -125,9 +125,9 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         buildInfo1.setText(String.format("Version: %s (%s)", BuildConfig.VERSION_NAME, Build.TAGS));
         buildInfo2.setText(String.format("Built by %s at %s", BuildConfig.BUILD_NAME, buildTime));
 
-        if (navigationView != null) {
+//        if (SharedPreferencesvigationView != null) {
             setupDrawerContent(navigationView);
-        }
+//        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // detail for android 5 devices
@@ -381,13 +381,13 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                         .replace(R.id.container, WardrivingFragment.newInstance(itemId))
                         .commit();
                 break;
-
-            case R.id.settings_item:
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.container, KaliPreferenceFragment.newInstance(itemId))
-                        .commit();
-                break;
+//
+//            case R.id.settings_item:
+//                fragmentManager
+//                        .beginTransaction()
+//                        .replace(R.id.container, KaliPreferenceFragment.newInstance(itemId))
+//                        .commit();
+//                break;
 
         }
     }

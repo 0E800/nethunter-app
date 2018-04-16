@@ -139,7 +139,7 @@ public class BadusbFragment extends Fragment {
         } else {
             command[0] = nh.APP_SCRIPTS_PATH + "/start-badusb-kitkat &> " + nh.APP_SD_FILES_PATH + "/badusb.log &";
         }
-        exe.RunAsRoot(command);
+        exe.runAsRoot(command);
         nh.showMessage("BadUSB attack started! Check /sdcard/nh_files/badusb.log", getActivity());
     }
 
@@ -151,7 +151,7 @@ public class BadusbFragment extends Fragment {
         } else {
             command[0] = nh.APP_SCRIPTS_PATH + "/stop-badusb-kitkat";
         }
-        exe.RunAsRoot(command);
+        exe.runAsRoot(command);
         nh.showMessage("BadUSB attack stopped!", getActivity());
     }
 }

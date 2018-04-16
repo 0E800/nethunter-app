@@ -206,7 +206,7 @@ public class ManaFragment extends KaliBaseFragment {
         } else {
             command[0] = "su -c '" + nh.APP_SCRIPTS_PATH + "/bootkali mana-kitkat stop'";
         }
-        exe.RunAsRoot(command);
+        exe.runAsRoot(command);
         nh.showMessage("Mana Stopped", getActivity());
     }
 

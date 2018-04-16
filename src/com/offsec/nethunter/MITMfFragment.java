@@ -126,7 +126,7 @@ public class MITMfFragment extends Fragment {
     private void stop() {
         ShellExecuter exe = new ShellExecuter();
         String[] command = new String[1];
-        exe.RunAsRoot(command);
+        exe.runAsRoot(command);
         nh.showMessage("MITMf Stopped!", getActivity());
     }
     /* Stop execution menu */

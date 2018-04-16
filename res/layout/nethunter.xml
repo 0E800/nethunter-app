@@ -60,7 +60,7 @@
             android:text="@string/nethunter_current_interfaces"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:id="@+id/nethunter_current_interfaces"
-            android:layout_gravity="bottom|left"
+            android:layout_gravity="bottom|start"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
@@ -70,7 +70,7 @@
             android:id="@+id/hidSWITCH"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Turn on HID (newer kernels only) "
+            android:text="@string/home_turn_on_hid"
             android:checked="false"/>
 
         <TextView
@@ -80,7 +80,7 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:id="@+id/nethunter_hid_title"
-            android:layout_gravity="bottom|left"
+            android:layout_gravity="bottom|start"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
             android:textColor="@android:color/white" />
@@ -93,7 +93,7 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:id="@+id/nethunter_busybox_title"
-            android:layout_gravity="bottom|left"
+            android:layout_gravity="bottom|start"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
             android:textColor="@android:color/white" />
@@ -116,7 +116,7 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:id="@+id/nethunter_kernel_version"
-            android:layout_gravity="bottom|left"
+            android:layout_gravity="bottom|start"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
             android:textColor="@android:color/white" />
@@ -138,7 +138,7 @@
             android:text="@string/nethunter_terminal_detect"
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:layout_gravity="bottom|left"
+            android:layout_gravity="bottom|start"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
             android:textColor="@android:color/white" />
@@ -157,7 +157,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|left"
+            android:layout_gravity="bottom|start"
             android:text="@string/nethunter_external_ip"
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"

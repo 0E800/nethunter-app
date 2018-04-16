@@ -232,7 +232,7 @@ class KaliServicesLoader extends BaseAdapter {
     private void addBootService(int serviceId) {
         String bootServiceFile = bootScriptPath + "/" + services[serviceId][4];
         String fileContents = shebang + services[serviceId][0] + "\n" + services[serviceId][2];
-        exe.RunAsRoot(new String[]{
+        exe.runAsRoot(new String[]{
                 "echo '" + fileContents + "' > " + bootServiceFile,
                 "chmod 700 " + bootServiceFile
         });
@@ -244,7 +244,7 @@ class KaliServicesLoader extends BaseAdapter {
     private void removeBootService(int serviceId) {
         // return the number of services
         String bootServiceFile = bootScriptPath + "/" + services[serviceId][4];
-        exe.RunAsRoot(new String[]{"rm -rf " + bootServiceFile});
+        exe.runAsRoot(new String[]{"rm -rf " + bootServiceFile});
     }
 
     // getView method is called for each item of ListView
@@ -316,7 +316,7 @@ class KaliServicesLoader extends BaseAdapter {
                 if (isChecked) {
                     new Thread(new Runnable() {
                         public void run() {
-                            exe.RunAsRoot(new String[]{services[position][2]});
+                            exe.runAsRoot(new String[]{services[position][2]});
                         }
 
                     }).start();
@@ -328,7 +328,7 @@ class KaliServicesLoader extends BaseAdapter {
                 } else {
                     new Thread(new Runnable() {
                         public void run() {
-                            exe.RunAsRoot(new String[]{services[position][3]});
+                            exe.runAsRoot(new String[]{services[position][3]});
                         }
 
                     }).start();

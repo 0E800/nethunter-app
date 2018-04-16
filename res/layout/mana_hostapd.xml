@@ -25,7 +25,6 @@
 
             <android.support.v7.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/autocomplete_interface"
-                style="@style/Nethunter.AutocompleteInput"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -43,7 +42,7 @@
                 android:layout_height="match_parent"
                 android:ems="10"
                 android:hint="@string/upstream"
-                style="@style/Nethunter.AutocompleteInput"/>
+                />
         </android.support.design.widget.TextInputLayout>
 
 
@@ -69,8 +68,7 @@
                 android:id="@+id/ssid"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/ssid"
-                style="@style/Nethunter.AutocompleteInput"/>
+                android:hint="@string/ssid"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -97,8 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
-                android:hint="@string/enable_karma"
-                style="@style/Nethunter.DesignTextInput"/>
+                android:hint="@string/enable_karma"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -111,8 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
-                android:hint="@string/karma_loud"
-                style="@style/Nethunter.DesignTextInput"/>
+                android:hint="@string/karma_loud"/>
         </android.support.design.widget.TextInputLayout>
 
 
