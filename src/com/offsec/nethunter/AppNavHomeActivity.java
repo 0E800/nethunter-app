@@ -87,10 +87,6 @@ public class AppNavHomeActivity extends AppCompatActivity implements
             checkForRoot();
         }
 
-//        Hack to get files copied over
-//        CopyBootFiles mytask = new CopyBootFiles(AppNavHomeActivity.this, AppNavHomeActivity.this.getAssets());
-//        mytask.execute();
-
         setContentView(R.layout.base_layout);
 
         //set kali wallpaper as background
@@ -106,6 +102,9 @@ public class AppNavHomeActivity extends AppCompatActivity implements
         LinearLayout navigationHeadView = (LinearLayout) inflater.inflate(R.layout.sidenav_header, null);
         navigationView.addHeaderView(navigationHeadView);
 
+        CopyBootFiles copyTask = new CopyBootFiles(AppNavHomeActivity.this, AppNavHomeActivity.this.getAssets());
+        copyTask.execute();
+
         FloatingActionButton readmeButton = navigationHeadView.findViewById(R.id.info_fab);
         readmeButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -113,6 +112,8 @@ public class AppNavHomeActivity extends AppCompatActivity implements
                 showLicense();
                 return false;
             }
+
+            //        Hack to get files copied over
         });
 
         /// moved build info to the menu

@@ -3,6 +3,7 @@ package com.offsec.nethunter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -72,9 +73,9 @@ public class MITMfFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.mitmf, container, false);
-        tabsPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
+        tabsPagerAdapter = new TabsPagerAdapter(requireActivity().getSupportFragmentManager());
 
         ViewPager mViewPager = rootView.findViewById(R.id.pagerMITMF);
         mViewPager.setAdapter(tabsPagerAdapter);
@@ -84,7 +85,7 @@ public class MITMfFragment extends Fragment {
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                getActivity().invalidateOptionsMenu();
+                requireActivity().invalidateOptionsMenu();
             }
         });
         setHasOptionsMenu(true);
@@ -107,9 +108,17 @@ public class MITMfFragment extends Fragment {
             case R.id.mitmf_menu_stop_service:
                 stop();
                 return true;
+            case R.id.mitmf_menu_save_config:
+                saveConfiguration();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void saveConfiguration() {
+//        todo: implement
+
     }
 
     private void start() {
@@ -120,14 +129,14 @@ public class MITMfFragment extends Fragment {
         }
 
         intentClickListener_NH("mitmf " + sb.toString());
-        nh.showMessage("MITMf Started!", getActivity());
+        nh.showMessage("MITMf Started!", requireActivity());
     }
 
     private void stop() {
         ShellExecuter exe = new ShellExecuter();
         String[] command = new String[1];
         exe.runAsRoot(command);
-        nh.showMessage("MITMf Stopped!", getActivity());
+        nh.showMessage("MITMf Stopped!", requireActivity());
     }
     /* Stop execution menu */
 
@@ -215,7 +224,7 @@ public class MITMfFragment extends Fragment {
 
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             generalBinding = MitmfGeneralBinding.inflate(inflater, container, false);
             mViewModel = new MITMFViewModel();
@@ -223,7 +232,7 @@ public class MITMfFragment extends Fragment {
 
             // Optional Presets Spinner
             Spinner interfaceSpinner = generalBinding.mitmfInterface;
-            interfaceAdapter = ArrayAdapter.createFromResource(getActivity(),
+            interfaceAdapter = ArrayAdapter.createFromResource(requireActivity(),
                     R.array.mitmf_interface_array, android.R.layout.simple_spinner_item);
             interfaceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             interfaceSpinner.setAdapter(interfaceAdapter);
@@ -319,7 +328,7 @@ public class MITMfFragment extends Fragment {
 
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             spoofBinding = MitmfSpoofBinding.inflate(inflater, container, false);
             viewModel = new MITMFViewModel();
@@ -328,7 +337,7 @@ public class MITMfFragment extends Fragment {
 
             // Redirect Spinner
             final Spinner redirectSpinner = spoofBinding.mitmfSpoofRedirectspin;
-            redirectAdapter = ArrayAdapter.createFromResource(getActivity(),
+            redirectAdapter = ArrayAdapter.createFromResource(requireActivity(),
                     R.array.mitmf_spoof_type, android.R.layout.simple_spinner_item);
             redirectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             redirectSpinner.setAdapter(redirectAdapter);
@@ -352,7 +361,7 @@ public class MITMfFragment extends Fragment {
             });
 
             // ARP Mode Spinner
-            ArrayAdapter<CharSequence> arpAdapter = ArrayAdapter.createFromResource(getActivity(),
+            ArrayAdapter<CharSequence> arpAdapter = ArrayAdapter.createFromResource(requireActivity(),
                     R.array.mitmf_spoof_arpmode, android.R.layout.simple_spinner_item);
             arpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spoofBinding.mitmfSpoofArpmodespin.setAdapter(arpAdapter);
@@ -378,14 +387,19 @@ public class MITMfFragment extends Fragment {
         public void getCommands(StringBuilder stringBuilder) {
             if (spoofBinding.mitmfEnablespoof.isChecked() && spoofOption != 0) {
                 stringBuilder.append(" --spoof");
-                if (spoofOption == 1) {
-                    stringBuilder.append(" --arp");
-                } else if (spoofOption == 2) {
-                    stringBuilder.append(" --icmp");
-                } else if (spoofOption == 3) {
-                    stringBuilder.append(" --dhcp");
-                } else if (spoofOption == 4) {
-                    stringBuilder.append(" --dns");
+                switch (spoofOption) {
+                    case 1:
+                        stringBuilder.append(" --arp");
+                        break;
+                    case 2:
+                        stringBuilder.append(" --icmp");
+                        break;
+                    case 3:
+                        stringBuilder.append(" --dhcp");
+                        break;
+                    case 4:
+                        stringBuilder.append(" --dns");
+                        break;
                 }
 
                 if (arpModeOption == 1) {
@@ -443,7 +457,7 @@ public class MITMfFragment extends Fragment {
         final ShellExecuter exe = new ShellExecuter();
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             final View rootView = inflater.inflate(R.layout.source_short, container, false);
 
@@ -461,9 +475,9 @@ public class MITMfFragment extends Fragment {
                     EditText source = rootView.findViewById(R.id.source);
                     Boolean isSaved = exe.SaveFileContents(source.getText().toString(), configFilePath);
                     if (isSaved) {
-                        nh.showMessage("Source updated", getActivity());
+                        nh.showMessage("Source updated", requireActivity());
                     } else {
-                        nh.showMessage("Source not updated", getActivity());
+                        nh.showMessage("Source not updated", requireActivity());
                     }
                 }
             });
@@ -481,7 +495,7 @@ public class MITMfFragment extends Fragment {
             intent.putExtra("com.offsec.nhterm.iInitialCommand", command);
             startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
         }
     }
 }

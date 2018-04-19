@@ -8,4 +8,9 @@
         android:id="@+id/mitmf_menu_stop_service"
         android:title="@string/stop_mitmf"
         app:showAsAction="never" />
+    <item
+        android:id = "@+id/mitmf_menu_save_config"
+        android:title="@string/save_configuration"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_save_white_24dp"/>
 </menu>

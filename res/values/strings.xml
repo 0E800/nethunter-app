@@ -4,13 +4,13 @@
     <string name="app_nav_home_label">NetHunter</string>
 
 
-    <string name="hometitle">System Information</string>
+    <string name="home_title">System Information</string>
     <string name="nethunter_description">Welcome to Kali Linux NetHunter by Offensive Security! This application is designed to make it easier to execute attacks and control services. The navigation menu contains links to useful commands, settings, macros, and attack configuration pages. Most configurations work out of the box but some may require some minimal tweaking.</string>
-    <string name="nethunter_current_interfaces">Network Interfaces</string>
-    <string name="nethunter_external_ip">External IP</string>
-    <string name="nethunter_hid_detect">HID Interfaces</string>
-    <string name="nethunter_busybox_detect">Busybox Version</string>
-    <string name="nethunter_kernelver_detect">Kernel Version</string>
+    <string name="nethunter_interface_heading">Network Interfaces</string>
+    <string name="nethunter_external_ip_heading">External IP</string>
+    <string name="nethunter_hid_heading">HID Interfaces</string>
+    <string name="nethunter_busybox_title">Busybox Version</string>
+    <string name="nethunter_kernel_heading">Kernel Version</string>
     <string name="nethunter_terminal_detect">Nethunter Terminal Status</string>
 
 
@@ -416,7 +416,16 @@
     <string name="service_status_switch_down">DOWN</string>
     <string name="service_status_switch_up">UP</string>
     <string name="service_start_at_boot">Start at boot</string>
-    <string name="home_turn_on_hid">Turn on HID (newer kernels only)</string>
+    <string name="nethunter_hid_switch_turn_on">Turn on HID (newer kernels only)</string>
+    <string name="save_configuration">Save Configuration</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="nethunter_no_hid">No HID interfaces detected</string>
+    <string name="nethunter_busybox_not_detected">Busybox not detected!</string>
+    <string name="nethunter_no_interfaces_detected">No network interfaces detected</string>
+    <string name="nethunter_not_find_kernel">Could not find kernel version!</string>
+    <string name="nethunter_terminal_not_installed">Nethunter Terminal is NOT installed!</string>
+    <string name="nethunter_terminal_installed">Nethunter Terminal is installed</string>
+    <string name="loading">Loading</string>
     <!-- End GPSFragment -->
 
 

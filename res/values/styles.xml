@@ -40,11 +40,14 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
-    <style name="Nethunter.NetworkInterfaceText" parent="Theme.Nethunter">
+    <style name="Nethunter.NethunterFragmentElements" parent="Theme.Nethunter">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
         <item name="android:padding">4dp</item>
-        <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
 

@@ -6,16 +6,17 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.offsec.nethunter.adapters.InterfaceItem;
+import com.offsec.nethunter.adapters.NethunterBaseItem;
+import com.offsec.nethunter.adapters.NethunterInterfaceAdapter;
 import com.offsec.nethunter.utils.NhPaths;
 import com.offsec.nethunter.utils.ShellExecuter;
 
@@ -24,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +42,9 @@ public class NetHunterFragment extends Fragment {
     private static final String IP_REGEX = "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b";
     private static final Pattern IP_REGEX_PATTERN = Pattern.compile(IP_REGEX);
     Switch HIDSwitch;
+    private NethunterInterfaceAdapter<InterfaceItem> interfaceAdapter;
+    private SwipeRefreshLayout refreshLayout;
+    private ListView list;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -62,43 +68,63 @@ public class NetHunterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.nethunter, container, false);
-        TextView ip = rootView.findViewById(R.id.editText2);
-        ip.setFocusable(false);
-        addClickListener(new View.OnClickListener() {
+
+        View.OnClickListener externalIpListener = new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 getExternalIp();
             }
-        }, rootView);
-        getInterfaces(rootView);
+        };
 
-        // HID Switch for newer kernels to turn on HID
-        HIDSwitch = rootView.findViewById(R.id.hidSWITCH);
-        HIDSwitch.setOnClickListener(new View.OnClickListener() {
-
+        View.OnClickListener hidSwitchListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(HIDSwitch.isChecked())
+                if(((Switch) v).isChecked())
                 {
-                    setHIDON();
+                    setHIDOn();
                 }
                 else {
                     setHIDOff();
                 }
             }
+        };
+
+        refreshLayout = (SwipeRefreshLayout) rootView;
+        refreshLayout.setRefreshing(true);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateListView();
+            }
         });
+
+        interfaceAdapter = new NethunterInterfaceAdapter<>(requireContext(), hidSwitchListener,
+                externalIpListener);
+        list = rootView.findViewById(R.id.list);
+        list.setAdapter(interfaceAdapter);
+
+        list.addHeaderView(LayoutInflater.from(list.getContext()).inflate(
+                R.layout.nethunter_header, list, false));
+
+        populateListView(interfaceAdapter);
+
+        // HID Switch for newer kernels to turn on HID
+
 
         return rootView;
     }
 
-    private void addClickListener(View.OnClickListener onClickListener, View rootView) {
-        rootView.findViewById(R.id.button1).setOnClickListener(onClickListener);
+    private void updateListView() {
+
+        populateListView(interfaceAdapter);
+        refreshLayout.setRefreshing(false);
     }
 
     private void getExternalIp() {
 
-        final TextView ip = (TextView) getActivity().findViewById(R.id.editText2);
-        ip.setText("Please wait...");
+//        final TextView ip = requireActivity().findViewById(R.id.editText2);
+//        ip.setText(R.string.please_wait);
 
         new Thread(new Runnable() {
             final StringBuilder result = new StringBuilder();
@@ -124,9 +150,9 @@ public class NetHunterFragment extends Fragment {
                 } else {
                     done = "Invalid IP!";
                 }
-                getActivity().runOnUiThread(new Runnable() {
+                requireActivity().runOnUiThread(new Runnable() {
                     public void run() {
-                        ip.setText(done);
+                        interfaceAdapter.setExternalIPText(done);
                     }
                 });
             }
@@ -135,7 +161,7 @@ public class NetHunterFragment extends Fragment {
 
     }
 
-    private void setHIDON() {
+    private void setHIDOn() {
         new Thread(new Runnable(){
 
             public void run(){
@@ -164,150 +190,151 @@ public class NetHunterFragment extends Fragment {
     }
 
 
-    private void getInterfaces(final View rootView) {
+    private void populateListView(final NethunterInterfaceAdapter<InterfaceItem> interfaceAdapter) {
+        interfaceAdapter.clear();
+        list.setAdapter(interfaceAdapter);
+
+        // Add the headings
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.NET_HEADING,
+                R.string.nethunter_interface_heading));
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.HID_HEADING,
+                R.string.nethunter_hid_heading));
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.HID_SWITCH,
+                R.string.nethunter_hid_switch_turn_on));
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.BUSYBOX_ITEM,
+                R.string.nethunter_busybox_title));
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.KERNEL_HEADING,
+                R.string.nethunter_kernel_heading));
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.NH_TERMINAL_HEADING,
+                R.string.nethunter_terminal_detect));
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.EXTERNAL_IP_HEADING,
+                R.string.nethunter_external_ip_heading));
+        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.EXTERNAL_IP,
+                R.string.get_external_ip));
+
 
         nh = new NhPaths();
 
         final boolean installed = appInstalledOrNot("com.offsec.nhterm");
 
         // 1 thread, 2 commands
-        final LinearLayout ifaceParent = (LinearLayout) rootView.findViewById(R.id.iface_parent);
-        final TextView busyboxIfaces = (TextView) rootView.findViewById(R.id.editTextBUSYBOX); // BUSYBOX IFACES
-        final TextView kernelverIfaces = (TextView) rootView.findViewById(R.id.editTextKERNELVER); // BUSYBOX IFACES
-        final TextView terminalIfaces = (TextView) rootView.findViewById(R.id.editTextNHTerminal); // BUSYBOX IFACES
+//        new Thread(new Runnable() {
+//            public void run() {
 
-        new Thread(new Runnable() {
-            public void run() {
-
-                String busybox_ver = nh.whichBusybox();
+                String busyboxVer = nh.whichBusybox();
 
                 ShellExecuter exe = new ShellExecuter();
-                String commandNET[] = {"/system/bin/ip -o addr show | busybox awk '/inet/ {print $2, $3, $4}'"};
+                String commandNet = "/system/bin/ip -o addr show";
                 String commandHID[] = {"sh", "-c", "ls /dev/hidg*"};
-                String commandBUSYBOX[] = {"sh", "-c", busybox_ver + " | " + busybox_ver + " head -1 | " + busybox_ver + " awk '{print $2}'"};
-                String commandKERNELVER[] = {"sh", "-c", "cat /proc/version"};
+                String commandBUSYBOX[] = {"sh", "-c", busyboxVer + " | " + busyboxVer + " head -1 | " + busyboxVer + " awk '{print $2}'"};
+                String commandKernelVer[] = {"/system/bin/sh", "-c", "cat /proc/version"};
 
-                final String outputNET = exe.executeCommand(commandNET);
+
+                final String outputNET = exe.executeCommand(commandNet);
+                final List<String> netArray = parseNetworkInterfaces(outputNET);
+
                 final String outputHID = exe.executeCommand(commandHID);
                 final String outputBUSYBOX = exe.executeCommand(commandBUSYBOX);
-                final String outputKERNELVER = exe.executeCommand(commandKERNELVER);
+                final String outputKernelVer = exe.executeCommand(commandKernelVer);
 
-                final String[] netArray = outputNET.split("\n");
                 final String[] hidArray = outputHID.split("\n");
-                final String[] busyboxArray = outputBUSYBOX.split("\n");
-                final String[] kernelverArray = outputKERNELVER.split("\n");
+                final String[] kernelverArray = outputKernelVer.split("\n");
 
-                    ifaceParent.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ifaceParent.findViewById(R.id.nethunter_loading_layout).setVisibility(View.GONE);
-                            ifaceParent.findViewById(R.id.nethunter_current_interfaces).setVisibility(View.VISIBLE);
-
-                            int ind = 3;
-                            if (outputNET.equals("")) {
-                                TextView textView = new TextView(new ContextThemeWrapper(
-                                        ifaceParent.getContext(),
-                                        R.style.Nethunter_NetworkInterfaceText));
-                                textView.setFocusable(false);
-                                textView.setText("No network interfaces detected");
-                                ifaceParent.addView(textView,ind);
-                                ind++;
-
-                            } else {
-                                for (final String netEntry :
-                                        netArray) {
-                                    TextView textView = new TextView(new ContextThemeWrapper(
-                                            ifaceParent.getContext(),
-                                            R.style.Nethunter_NetworkInterfaceText));
-                                    textView.setText(netEntry);
-                                    textView.setOnLongClickListener(new View.OnLongClickListener() {
-                                        @Override
-                                        public boolean onLongClick(View v) {
-                                            Log.d("CLICKED", netEntry);
-                                            String itemData = netEntry.split("\\s+")[2];
-                                            doCopy(itemData);
-                                            return true;
-                                        }
-                                    });
-                                    ifaceParent.addView(textView, ind);
-                                    ind++;
-
-                                }
+                if (outputNET.equals("")) {
+                    interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.NET_ITEM,
+                            R.string.nethunter_no_interfaces_detected));
+                } else {
+                    for (final String netEntry : netArray) {
+                        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.NET_ITEM,
+                                netEntry));
+//                        textView.setOnLongClickListener(new View.OnLongClickListener() {
+//                            @Override
+//                                        public boolean onLongClick(View v) {
+//                                            Log.d("CLICKED", netEntry);
+//                                            String itemData = netEntry.split("\\s+")[2];
+//                                            doCopy(itemData);
+//                                            return true;
+//                                        }
+//                                    });
                             }
-                            ind++;
-                            ifaceParent.findViewById(R.id.nethunter_hid_title).setVisibility(View.VISIBLE);
-
-                            if (outputHID.equals("")) {
-                                TextView textView = new TextView(new ContextThemeWrapper(
-                                        ifaceParent.getContext(),
-                                        R.style.Nethunter_NetworkInterfaceText));
-                                textView.setFocusable(false);
-                                textView.setText("No HID interfaces detected");
-                                ifaceParent.addView(textView,ind);
-                                ind++;
-
-                            } else {
-                                for (final String netEntry :
-                                        hidArray) {
-                                    TextView textView = new TextView(new ContextThemeWrapper(
-                                            ifaceParent.getContext(),
-                                            R.style.Nethunter_NetworkInterfaceText));
-                                    textView.setText(netEntry);
-                                    textView.setOnLongClickListener(new View.OnLongClickListener() {
-                                        @Override
-                                        public boolean onLongClick(View v) {
-                                            Log.d("CLICKED", netEntry);
-                                            String itemData = netEntry;
-                                            doCopy(itemData);
-                                            return true;
-                                        }
-                                    });
-                                    ifaceParent.addView(textView, ind);
-                                    ind++;
-                                }
-                            }
-
-                            ifaceParent.findViewById(R.id.nethunter_busybox_title).setVisibility(View.VISIBLE);
-                            busyboxIfaces.setVisibility(View.VISIBLE);
-                            if (outputBUSYBOX.equals("")) {
-                                busyboxIfaces.setText("Busnethunter_ext_ip_titleybox not detected!");
-                                busyboxIfaces.setFocusable(false);
-                            } else {
-                                busyboxIfaces.setText(outputBUSYBOX);
-                            }
-
-                            ifaceParent.findViewById(R.id.nethunter_kernel_version).setVisibility(View.VISIBLE);
-                            kernelverIfaces.setVisibility(View.VISIBLE);
-                            if (outputKERNELVER.equals("")) {
-                                kernelverIfaces.setText("Could not find kernel version!");
-                                kernelverIfaces.setFocusable(false);
-                            } else {
-                                kernelverIfaces.setVisibility(View.GONE);
-                                kernelverIfaces.setText(outputKERNELVER);
-                            }
-
-                            ifaceParent.findViewById(R.id.nethunter_kernel_version).setVisibility(View.VISIBLE);
-                            terminalIfaces.setVisibility(View.VISIBLE);
-                            if(!installed) {
-                                // Installed, make note!
-                                terminalIfaces.setText("Nethunter Terminal is NOT installed!");
-                                terminalIfaces.setFocusable(false);
-                            } else {
-                                // Not installed, make note!
-                                terminalIfaces.setText("Nethunter Terminal is installed");
-                            }
-
-                            ifaceParent.findViewById(R.id.nethunter_ext_ip_title).setVisibility(View.VISIBLE);
-                            ifaceParent.findViewById(R.id.nethunter_ext_ip_layout).setVisibility(View.VISIBLE);
-
-                        }
-                    });
                 }
-        }).start();
+                if (outputHID.equals("")) {
+                        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.HID_ITEM,
+                                R.string.nethunter_no_hid));
+                } else {
+                    for (final String hidEntry : hidArray) {
+//                                    textView.setOnLongClickListener(new View.OnLongClickListener() {
+//                                        @Override
+//                                        public boolean onLongClick(View v) {
+//                                            Log.d("CLICKED", hidEntry);
+//                                            doCopy(hidEntry);
+//                                            return true;
+//                                        }
+//                                    });
+                        interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.HID_ITEM,
+                                hidEntry));
+                    }
+                }
+
+                if (outputBUSYBOX.equals("")) {
+                    interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.BUSYBOX_ITEM,
+                            R.string.nethunter_busybox_not_detected));
+                } else {
+                    interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.BUSYBOX_ITEM,
+                            outputBUSYBOX));
+                }
+
+                if (outputKernelVer.equals("")) {
+                    interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.KERNEL_ITEM,
+                            R.string.nethunter_not_find_kernel));
+                } else {
+                    interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.KERNEL_ITEM,
+                            outputKernelVer));
+                }
+
+                if(!installed) {
+                    interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.NH_TERMINAL_ITEM,
+                            R.string.nethunter_terminal_not_installed));
+                } else {
+                    interfaceAdapter.add(new InterfaceItem(NethunterBaseItem.NH_TERMINAL_ITEM,
+                            R.string.nethunter_terminal_installed));
+                }
+
+                refreshLayout.setRefreshing(false);
+            }
+
+//        }).start();
+//    }
+
+    @NonNull
+    private List<String> parseNetworkInterfaces(String outputNET) {
+        String[] split = outputNET.split("\n");
+        String[] splitLine;
+        String[] ifaceLine = new String[3];
+        final List<String> netArray = new LinkedList<>();
+        for (String line : split) {
+            if (line.contains("inet")) {
+                splitLine = line.substring(line.indexOf(":") + 1).split(" ");
+                int numFound = 0;
+                for (String sequence: splitLine) {
+                    if (!sequence.equals("")) {
+                        ifaceLine[numFound] = sequence;
+                        numFound++;
+                    }
+                    if (numFound == 3) {
+                        netArray.add(String.join(" ", ifaceLine));
+                        break;
+                    }
+
+                }
+            }
+        }
+        return netArray;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private boolean appInstalledOrNot(String uri) {
-        PackageManager pm = getActivity().getPackageManager();
+        PackageManager pm = requireActivity().getPackageManager();
         boolean app_installed;
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);

@@ -40,6 +40,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:15.0.0'
     implementation 'com.android.support:preference-v14:27.1.1'
     implementation 'com.sshtools:j2ssh-maverick:1.5.5'
+    implementation 'com.fasterxml.jackson:jackson-base:2.9.5'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.5'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
 }
 
 android {

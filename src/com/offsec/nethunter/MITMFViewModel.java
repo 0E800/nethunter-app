@@ -10,6 +10,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.CheckBox;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class MITMFViewModel extends BaseObservable {
 
 
@@ -17,22 +19,28 @@ public class MITMFViewModel extends BaseObservable {
     private boolean injectJS;
     private boolean injectHTML;
     private boolean injectHTMLPayload;
+    private boolean injectHtmlURLEmpty = true;
     private boolean injectJSEnabled = true;
     private boolean injectionEnabled = false;
     private boolean shellShockEnabled = false;
     private boolean spoofEnabled = false;
     private boolean responderChecked = false;
+    private boolean injectJSEmpty = true;
+
+
 
     public void setIntervalChecked(boolean intervalChecked) {
         this.intervalChecked = intervalChecked;
     }
 
+    @JsonIgnore
     public void clickInject(View view) {
         injectionEnabled = ((CheckBox) view).isChecked();
         notifyPropertyChanged(BR.injectionEnabled);
         notifyEnabledChanged();
     }
 
+    @JsonIgnore
     public void clickSpoof(View view) {
         spoofEnabled = ((CheckBox) view).isChecked();
         notifyPropertyChanged(BR.spoofEnabled);
@@ -60,6 +68,7 @@ public class MITMFViewModel extends BaseObservable {
         return injectJS;
     }
 
+    @JsonIgnore
     public void clickInjectJS(View view) {
         injectJS = ((CheckBox) view).isChecked();
         notifyPropertyChanged(BR.injectJS);
@@ -76,6 +85,7 @@ public class MITMFViewModel extends BaseObservable {
     }
 
 
+    @JsonIgnore
     public void clickInjectHTML(View view) {
         injectHTML = ((CheckBox) view).isChecked();
         notifyPropertyChanged(BR.injectHTML);
@@ -90,13 +100,11 @@ public class MITMFViewModel extends BaseObservable {
     public boolean isInjectHTMLPayload() {
         return injectHTMLPayload;
     }
-
+    @JsonIgnore
     public void clickInjectHTMLPayload(View view) {
         injectHTMLPayload = ((CheckBox) view).isChecked();
         notifyPropertyChanged(BR.injectHTMLPayload);
     }
-
-    private boolean injectJSEmpty = true;
     public TextWatcher injectJSWatcher = new TextWatcherAdapter() {
         @Override
         public void afterTextChanged(Editable s) {
@@ -105,13 +113,12 @@ public class MITMFViewModel extends BaseObservable {
         }
     };
 
+
     private void notifyEnabledChanged() {
         notifyPropertyChanged(BR.injectJSEnabled);
         notifyPropertyChanged(BR.injectHtmlUrlEnabled);
         notifyPropertyChanged(BR.injectHtmlEnabled);
     }
-
-    private boolean injectHtmlURLEmpty = true;
 
     public TextWatcher injectHtmlUrlWatcher = new TextWatcherAdapter() {
         @Override
@@ -162,6 +169,42 @@ public class MITMFViewModel extends BaseObservable {
         return spoofEnabled;
     }
 
+    public void setInjectHtmlURLEmpty(boolean injectHtmlURLEmpty) {
+        this.injectHtmlURLEmpty = injectHtmlURLEmpty;
+    }
+
+    public void setInjectJSEnabled(boolean injectJSEnabled) {
+        this.injectJSEnabled = injectJSEnabled;
+    }
+
+    public void setInjectionEnabled(boolean injectionEnabled) {
+        this.injectionEnabled = injectionEnabled;
+    }
+
+    public void setSpoofEnabled(boolean spoofEnabled) {
+        this.spoofEnabled = spoofEnabled;
+    }
+
+    public void setInjectJSEmpty(boolean injectJSEmpty) {
+        this.injectJSEmpty = injectJSEmpty;
+    }
+
+    public void setInjectJSWatcher(TextWatcher injectJSWatcher) {
+        this.injectJSWatcher = injectJSWatcher;
+    }
+
+    public void setInjectHtmlUrlWatcher(TextWatcher injectHtmlUrlWatcher) {
+        this.injectHtmlUrlWatcher = injectHtmlUrlWatcher;
+    }
+
+    public void setInjectHtmlEmpty(boolean injectHtmlEmpty) {
+        this.injectHtmlEmpty = injectHtmlEmpty;
+    }
+
+    public void setInjectHtmlWatcher(TextWatcher injectHtmlWatcher) {
+        this.injectHtmlWatcher = injectHtmlWatcher;
+    }
+
     @Bindable
     public boolean isResponderChecked() {
         return responderChecked;
@@ -188,6 +231,7 @@ public class MITMFViewModel extends BaseObservable {
     }
 
 
+    @JsonIgnore
     public void responderClicked(View view) {
         responderChecked = ((CheckBox) view).isChecked();
         notifyPropertyChanged(BR.responderChecked);
@@ -200,6 +244,7 @@ public class MITMFViewModel extends BaseObservable {
     }
 
     @InverseBindingAdapter(attribute = "android:checked", event = "android:checked")
+    @JsonIgnore
     public static boolean getViewChecked(CheckBox view) {
         return view.isChecked();
     }
