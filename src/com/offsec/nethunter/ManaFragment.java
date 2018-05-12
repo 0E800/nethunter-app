@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -281,7 +282,9 @@ public class ManaFragment extends KaliBaseFragment {
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.mana_edit_file, container, false);
+            ListView rootView = (ListView) inflater.inflate(R.layout.mana_edit_file, container, false);
+
+
             return rootView;
         }
     }
@@ -857,6 +860,7 @@ public class ManaFragment extends KaliBaseFragment {
         }
     }
 
+
     private void intentClickListener_NH(final String command) {
         try {
             Intent intent =
@@ -865,7 +869,7 @@ public class ManaFragment extends KaliBaseFragment {
             intent.putExtra("com.offsec.nhterm.iInitialCommand", command);
             startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
         }
     }
 }

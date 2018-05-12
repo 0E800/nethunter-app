@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ public class NetHunterFragment extends Fragment {
     private NethunterInterfaceAdapter<InterfaceItem> interfaceAdapter;
     private SwipeRefreshLayout refreshLayout;
     private ListView list;
+    private View rootView;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -67,7 +69,7 @@ public class NetHunterFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.nethunter, container, false);
+        rootView = inflater.inflate(R.layout.nethunter, container, false);
 
         View.OnClickListener externalIpListener = new View.OnClickListener() {
             @Override
@@ -351,9 +353,9 @@ public class NetHunterFragment extends Fragment {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText("WordKeeper", text);
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(getContext(), "Copied: " + text, Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, "Copied: ", Snackbar.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(getContext(), "Error copying: " + text, Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, "Error copying:  ", Snackbar.LENGTH_SHORT).show();
         }
     }
 }

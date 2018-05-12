@@ -43,6 +43,7 @@ dependencies {
     implementation 'com.fasterxml.jackson:jackson-base:2.9.5'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.5'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 }
 
 android {

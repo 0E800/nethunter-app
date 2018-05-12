@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -28,6 +30,7 @@ public class VNCFragment extends Fragment {
 
     NhPaths nh;
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private View rootView;
 
     public VNCFragment() {
     }
@@ -43,11 +46,11 @@ public class VNCFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.vnc_setup, container, false);
+        rootView = inflater.inflate(R.layout.vnc_setup, container, false);
 
         // Get screen size to pass to VNC
         DisplayMetrics displaymetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         final int screen_height = displaymetrics.heightPixels;
         final int screen_width = displaymetrics.widthPixels;
 
@@ -127,7 +130,7 @@ public class VNCFragment extends Fragment {
             String _USER = ((EditText) getView().findViewById(R.id.vnc_USER)).getText().toString();
             int _RESOLUTION = ((Spinner) getView().findViewById(R.id.resolution_spinner)).getSelectedItemPosition();
             if (!_R_IP.equals("") && !_R_PORT.equals("") && !_NICK.equals("")) {
-                Intent intent = getActivity().getApplicationContext().getPackageManager().getLaunchIntentForPackage("com.offsec.nhvnc");
+                Intent intent = requireActivity().getApplicationContext().getPackageManager().getLaunchIntentForPackage("com.offsec.nhvnc");
                 intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                 intent.putExtra("com.offsec.nhvnc.EXTRA_CONN_DATA", true);
                 intent.putExtra("R_IP", _R_IP);
@@ -141,8 +144,10 @@ public class VNCFragment extends Fragment {
             }
 
         } catch (Exception e) {
-            Log.d("errorLAinching", e.toString());
-            Toast.makeText(getActivity().getApplicationContext(), "NetHunter VNC not found!", Toast.LENGTH_SHORT).show();
+            Log.d("errorLaunching", e.toString());
+            Snackbar snackbar = Snackbar.make
+                    (rootView, "NetHunter VNC not found!", Snackbar.LENGTH_SHORT);
+            snackbar.show();
         }
     }
 
@@ -154,8 +159,9 @@ public class VNCFragment extends Fragment {
             intent.putExtra("com.offsec.nhterm.iInitialCommand", command);
             startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.toast_install_terminal), Toast.LENGTH_SHORT).show();
-
+            Snackbar snackbar = Snackbar.make
+                    (rootView, R.string.toast_install_terminal, Snackbar.LENGTH_SHORT);
+            snackbar.show();
         }
     }
 }
